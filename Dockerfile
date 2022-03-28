@@ -1,9 +1,15 @@
 FROM debian:bookworm
 
-ENV HOME /root
+
+
 ENV DEBIAN_FRONTEND "noninteractive"
 ENV CI true
 EXPOSE 8000
+
+# WORKDIR $HOME
+# RUN useradd --create-home --no-log-init --shell /bin/bash docker
+# USER docker
+# WORKDIR /home/docker
 
 RUN apt-get update -q -y  && \
      apt update && \
@@ -127,6 +133,6 @@ RUN apt-get update -q -y  && \
   apt-get -y remove  \
   software-properties-common
 
-CMD [ "/bin/bash" ]
+CMD [ "/bin/sh" ]
 
-WORKDIR $HOME
+

@@ -1,0 +1,2 @@
+ 
+`docker build -t rath3t/wsl-debian-bookworm:latest .`
