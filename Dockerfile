@@ -57,6 +57,7 @@ RUN apt -y --no-install-recommends install liblapack-dev \
   libgtest-dev \
   gnuplot \
   python3 \
+  python3-dev \
   pip \
   clang-format-12 \
   gnuplot-x11 \
@@ -123,7 +124,11 @@ RUN  mkdir -p dune && \
   cd dune && \
   git clone https://gitlab.dune-project.org/extensions/dune-alugrid.git && \
   git clone https://gitlab.dune-project.org/extensions/dune-foamgrid.git && \
+  git clone https://git.imp.fu-berlin.de/agnumpde/dune-matrix-vector.git && \
+  git clone https://git.imp.fu-berlin.de/agnumpde/dune-fufem.git && \
   dunecontrol git checkout releases/2.8 && \
+  sed -i '15 i add_subdirectory("cmake/modules")' dune-fufem/CMakeLists.txt && \
+  sed -i 's/set(modules "DuneFufemMacros.cmake")/set(modules "DuneFufemMacros.cmake" "AddPythonLibsFlags.cmake" "AddAdolcFlags.cmake" "AddHDF5Flags.cmake" "FindAdolc.cmake")/' dune-fufem/cmake/modules/CMakeLists.txt && \
   git clone https://github.com/rath3t/dune-iga.git && \
   dunecontrol cmake "-DCMAKE_BUILD_TYPE=Release" && \
   dunecontrol make && \
