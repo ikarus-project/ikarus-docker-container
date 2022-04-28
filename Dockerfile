@@ -2,9 +2,11 @@ FROM debian:bookworm
 
 
 
-ENV DEBIAN_FRONTEND "noninteractive"
+ARG DEBIAN_FRONTEND=noninteractive
 ENV CI true
 EXPOSE 8000
+ENV DISPLAY=:0
+ENV LD_LIBRARY_PATH=/usr/lib/wsl/lib
 
 # WORKDIR $HOME
 # RUN useradd --create-home --no-log-init --shell /bin/bash docker
@@ -25,6 +27,8 @@ RUN apt-get update -q -y  && \
   gdb  \
   lldb \
   gcovr \
+  valgrind \
+  mesa-utils \
   clang \
   libgbm1 \
   libmetis-dev \
@@ -145,4 +149,4 @@ RUN  mkdir -p dune && \
 
 CMD [ "/bin/sh" ]
 
-
+ENTRYPOINT ["bash"]
