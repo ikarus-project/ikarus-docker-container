@@ -1,3 +1,0 @@
- 
-`docker build --squash -t rath3t/ikarus-debian-bookworm:latest .`
-`docker push rath3t/ikarus-debian-bookworm:latest`
