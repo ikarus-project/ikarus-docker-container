@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the Docker image
-        run: docker build . --squash --file Dockerfile --tag rath3t/wsl-debian-bookworm
+        run: docker build . --file Dockerfile --tag rath3t/wsl-debian-bookworm
       - name: Docker Login
         uses: azure/docker-login@v1
         with:

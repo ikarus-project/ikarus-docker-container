@@ -42,9 +42,8 @@ RUN apt-get update -q -y  && \
   clang-format-13 \
   libc++-13-dev \
   libc++abi-13-dev \
-  llvm-13-dev
-
-RUN apt -y --no-install-recommends install liblapack-dev \
+  llvm-13-dev \
+  liblapack-dev \
   libopenblas-dev \
   libsuitesparse-dev \
   libdune-common-dev \
@@ -66,9 +65,8 @@ RUN apt -y --no-install-recommends install liblapack-dev \
   clang-format-12 \
   gnuplot-x11 \
   curl \
-  cppcheck
-
-RUN apt-get -y --no-install-recommends  install libayatana-appindicator3-1  \
+  cppcheck \
+  libayatana-appindicator3-1  \
   libasound2 xvfb && \
   wget https://github.com/jgraph/drawio-desktop/releases/download/v16.5.1/drawio-amd64-16.5.1.deb && \
   dpkg -i drawio-amd64-16.5.1.deb && \
@@ -79,9 +77,9 @@ RUN apt-get -y --no-install-recommends  install libayatana-appindicator3-1  \
   pip install --no-cache-dir mkdocs-macros-plugin && \
   pip install --no-cache-dir mkdocs-drawio-exporter && \
   pip install --no-cache-dir mkdocs-bibtex && \
-  cp /usr/bin/clang-format-12 /usr/bin/clang-format
-
-RUN mkdir -p iwyu && \
+  cp /usr/bin/clang-format-12 /usr/bin/clang-format && \
+  cd ~ && \
+  mkdir -p iwyu && \
   cd iwyu && \
   git clone https://github.com/include-what-you-use/include-what-you-use.git && \
   cd include-what-you-use && \
@@ -122,9 +120,8 @@ RUN mkdir -p iwyu && \
   cmake .. -DAUTODIFF_BUILD_PYTHON=0 -DAUTODIFF_BUILD_EXAMPLES=0 -DAUTODIFF_BUILD_DOCS=0 -DAUTODIFF_BUILD_TESTS=0 && \
    cmake --build . --target install && \
   cd ~ && \
-  rm -rf autodiff
-
-RUN  mkdir -p dune && \
+  rm -rf autodiff && \
+  mkdir -p dune && \
   cd dune && \
   git clone https://gitlab.dune-project.org/extensions/dune-alugrid.git && \
   git clone https://gitlab.dune-project.org/extensions/dune-foamgrid.git && \
