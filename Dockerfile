@@ -145,5 +145,3 @@ RUN apt-get update -q -y  && \
 
 
 CMD [ "/bin/sh" ]
-
-ENTRYPOINT ["bash"]
