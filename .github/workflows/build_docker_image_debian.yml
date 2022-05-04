@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag rath3t/wsl-debian-bookworm
+        run: docker build . --file Dockerfile --tag rath3t/ikarus-debian-bookworm:latest
       - name: Docker Login
         uses: azure/docker-login@v1
         with:
@@ -20,4 +20,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Publish the Docker image
         if: ${{ github.event_name == 'push'}}
-        run: docker push rath3t/wsl-debian-bookworm
+        run: docker push rath3t/ikarus-debian-bookworm:latest
