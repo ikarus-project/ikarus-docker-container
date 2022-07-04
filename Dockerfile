@@ -14,8 +14,8 @@ ENV LD_LIBRARY_PATH=/usr/lib/wsl/lib
 # WORKDIR /home/docker
 
 RUN apt-get update -q -y  && \
-     apt update && \
-   apt -y --no-install-recommends install build-essential \
+     apt-get update && \
+   apt-get -y --no-install-recommends install build-essential \
   libssl-dev \
   git \
   wget \
@@ -62,7 +62,6 @@ RUN apt-get update -q -y  && \
   python3 \
   python3-dev \
   pip \
-  clang-format-12 \
   gnuplot-x11 \
   curl \
   cppcheck \
@@ -77,7 +76,7 @@ RUN apt-get update -q -y  && \
   pip install --no-cache-dir mkdocs-macros-plugin && \
   pip install --no-cache-dir mkdocs-drawio-exporter && \
   pip install --no-cache-dir mkdocs-bibtex && \
-  cp /usr/bin/clang-format-12 /usr/bin/clang-format && \
+  cp /usr/bin/clang-format-13 /usr/bin/clang-format && \
   cd ~ && \
   mkdir -p iwyu && \
   cd iwyu && \
@@ -131,6 +130,9 @@ RUN apt-get update -q -y  && \
   sed -i '15 i add_subdirectory("cmake/modules")' dune-fufem/CMakeLists.txt && \
   sed -i 's/set(modules "DuneFufemMacros.cmake")/set(modules "DuneFufemMacros.cmake" "AddPythonLibsFlags.cmake" "AddAdolcFlags.cmake" "AddHDF5Flags.cmake" "FindAdolc.cmake")/' dune-fufem/cmake/modules/CMakeLists.txt && \
   git clone https://github.com/rath3t/dune-iga.git && \
+  cd dune-iga && \
+  git checkout releases/2.8.1 && \
+  cd .. && \
   dunecontrol cmake "-DCMAKE_BUILD_TYPE=Release" && \
   dunecontrol make && \
   dunecontrol make install && \
