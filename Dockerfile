@@ -1,4 +1,4 @@
-FROM debian:bookworm
+FROM debian:bookworm-slim
 
 
 
@@ -38,11 +38,11 @@ RUN apt-get update -q -y  && \
   libsecret-1-0 \
   xdg-utils \
   clang-tidy \
-  libclang-13-dev \
+  libclang-14-dev \
   clang-format-13 \
-  libc++-13-dev \
-  libc++abi-13-dev \
-  llvm-13-dev \
+  libc++-14-dev \
+  libc++abi-14-dev \
+  llvm-14-dev \
   liblapack-dev \
   libopenblas-dev \
   libsuitesparse-dev \
@@ -82,10 +82,10 @@ RUN apt-get update -q -y  && \
   cd iwyu && \
   git clone https://github.com/include-what-you-use/include-what-you-use.git && \
   cd include-what-you-use && \
-  git checkout clang_13 && \
+  git checkout clang_14 && \
   cd .. && \
   mkdir -p build && cd build && \
-  cmake -G "Unix Makefiles" -DIWYU_LLVM_ROOT_PATH=/usr/lib/llvm-13 ../include-what-you-use && \
+  cmake -G "Unix Makefiles" -DIWYU_LLVM_ROOT_PATH=/usr/lib/llvm-14 ../include-what-you-use && \
   make && \
   make install && \
   cd ~ && \
@@ -105,6 +105,7 @@ RUN apt-get update -q -y  && \
   rm -rf eigen && \
   git clone https://github.com/alandefreitas/matplotplusplus.git && \
   cd matplotplusplus && \
+  git checkout v1.1.0 && \
   mkdir -p build && \
   cd build && \
   cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF && \
@@ -131,7 +132,7 @@ RUN apt-get update -q -y  && \
   sed -i 's/set(modules "DuneFufemMacros.cmake")/set(modules "DuneFufemMacros.cmake" "AddPythonLibsFlags.cmake" "AddAdolcFlags.cmake" "AddHDF5Flags.cmake" "FindAdolc.cmake")/' dune-fufem/cmake/modules/CMakeLists.txt && \
   git clone https://github.com/rath3t/dune-iga.git && \
   cd dune-iga && \
-  git checkout releases/2.8.1 && \
+  git checkout main && \
   cd .. && \
   dunecontrol cmake "-DCMAKE_BUILD_TYPE=Release" && \
   dunecontrol make && \
