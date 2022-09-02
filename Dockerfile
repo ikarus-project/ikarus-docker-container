@@ -139,6 +139,10 @@ RUN apt-get update -q -y  && \
   dunecontrol make install && \
   cd .. && \
   rm -rf dune && \
+  git clone https://github.com/dmillard/eigengdb && \
+  cd eigengdb && \
+  python3 setup.py install && \
+  python3 bin/eigengdb_register_printers && \
   apt-get auto-remove -y && \
   apt-get clean && \
   rm -rvf /var/lib/apt/lists/* && \
