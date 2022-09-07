@@ -126,6 +126,7 @@ RUN apt-get update -q -y  && \
   git clone https://gitlab.dune-project.org/extensions/dune-alugrid.git && \
   git clone https://gitlab.dune-project.org/extensions/dune-foamgrid.git && \
   git clone https://git.imp.fu-berlin.de/agnumpde/dune-matrix-vector.git && \
+  git clone https://gitlab.dune-project.org/extensions/dune-vtk.git && \
   git clone https://git.imp.fu-berlin.de/agnumpde/dune-fufem.git && \
   dunecontrol git checkout releases/2.8 && \
   sed -i '15 i add_subdirectory("cmake/modules")' dune-fufem/CMakeLists.txt && \
@@ -141,8 +142,9 @@ RUN apt-get update -q -y  && \
   rm -rf dune && \
   git clone https://github.com/dmillard/eigengdb && \
   cd eigengdb && \
-  python3 setup.py install && \
-  python3 bin/eigengdb_register_printers && \
+  python3.10 setup.py install && \
+  python3.10 bin/eigengdb_register_printers && \
+  gdb -q -iex "add-auto-load-safe-path /tmp/Ikarus/.gdbinit" && \
   apt-get auto-remove -y && \
   apt-get clean && \
   rm -rvf /var/lib/apt/lists/* && \
