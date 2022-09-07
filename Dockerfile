@@ -139,13 +139,13 @@ RUN git clone https://github.com/gabime/spdlog.git && \
   cmake .. -DAUTODIFF_BUILD_PYTHON=0 -DAUTODIFF_BUILD_EXAMPLES=0 -DAUTODIFF_BUILD_DOCS=0 -DAUTODIFF_BUILD_TESTS=0 && \
    cmake --build . --target install && \
   cd ~ && \
-  rm -rf autodiff && \
-  mkdir -p dune && \
+  rm -rf autodiff
+
+RUN mkdir -p dune && \
   cd dune && \
   git clone https://gitlab.dune-project.org/extensions/dune-alugrid.git && \
   git clone https://gitlab.dune-project.org/extensions/dune-foamgrid.git && \
   git clone https://git.imp.fu-berlin.de/agnumpde/dune-matrix-vector.git && \
-  git clone https://gitlab.dune-project.org/extensions/dune-vtk.git && \
   git clone https://git.imp.fu-berlin.de/agnumpde/dune-fufem.git && \
   dunecontrol git checkout releases/2.8 && \
   sed -i '15 i add_subdirectory("cmake/modules")' dune-fufem/CMakeLists.txt && \
@@ -153,6 +153,10 @@ RUN git clone https://github.com/gabime/spdlog.git && \
   git clone https://github.com/rath3t/dune-iga.git && \
   cd dune-iga && \
   git checkout main && \
+  cd .. && \
+  git clone https://gitlab.dune-project.org/extensions/dune-vtk.git && \
+  cd dune-vtk && \
+  git checkout releases/2.8 && \
   cd .. && \
   dunecontrol cmake "-DCMAKE_BUILD_TYPE=Release" && \
   dunecontrol make && \
