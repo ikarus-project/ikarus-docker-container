@@ -55,7 +55,6 @@ RUN apt-get update -q -y  && \
   libdune-uggrid-dev \
   libdune-grid-glue-dev \
   libdune-istl-dev \
-  libspdlog-dev \
   libbenchmark-dev \
   libgtest-dev \
   gnuplot \
@@ -66,7 +65,27 @@ RUN apt-get update -q -y  && \
   curl \
   cppcheck \
   libayatana-appindicator3-1  \
-  libasound2 xvfb && \
+  libasound2 xvfb
+
+RUN git clone https://github.com/gabime/spdlog.git && \
+  cd spdlog && \
+  git checkout v1.10.0 && \
+  mkdir build && \
+  cd build && \
+  cmake .. -DSPDLOG_FMT_EXTERNAL=FALSE && \
+  make install && \
+  cd ~ && \
+  rm -rf fmt && \
+  cd ~ && \
+  mkdir -p catch2 && \
+  cd catch2 && \
+  git clone https://github.com/catchorg/Catch2.git && \
+  cd Catch2 && \
+  git checkout v3.1.0 && \
+  cmake -Bbuild -H. -DBUILD_TESTING=OFF && \
+  cmake --build build/ --target install && \
+  cd ~ && \
+  rm -rf catch2 && \
   wget https://github.com/jgraph/drawio-desktop/releases/download/v16.5.1/drawio-amd64-16.5.1.deb && \
   dpkg -i drawio-amd64-16.5.1.deb && \
   rm drawio-amd64-16.5.1.deb && \
