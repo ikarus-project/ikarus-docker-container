@@ -22,8 +22,8 @@ RUN apt-get update -q -y  && \
   apt-utils \
   software-properties-common \
   gfortran \
-  gcc-11 \
-  g++-11 \
+  gcc-12 \
+  g++-12 \
   gdb  \
   lldb \
   gcovr \
