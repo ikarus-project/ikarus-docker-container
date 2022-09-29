@@ -57,6 +57,7 @@ RUN apt-get update -q -y  && \
   libdune-istl-dev \
   libbenchmark-dev \
   libgtest-dev \
+  libquadmath0 \
   gnuplot \
   python3 \
   python3-dev \
