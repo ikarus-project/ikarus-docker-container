@@ -26,6 +26,7 @@ RUN apt-get update -q -y  && \
   g++-12 \
   gdb  \
   lldb \
+  lcov \
   gcovr \
   valgrind \
   mesa-utils \
