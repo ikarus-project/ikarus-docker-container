@@ -97,6 +97,7 @@ RUN git clone https://github.com/gabime/spdlog.git && \
   pip install --no-cache-dir mkdocs-macros-plugin && \
   pip install --no-cache-dir mkdocs-drawio-exporter && \
   pip install --no-cache-dir mkdocs-bibtex && \
+  pip install --no-cache-dir codespell && \
   cp /usr/bin/clang-format-13 /usr/bin/clang-format && \
   cd ~ && \
   mkdir -p iwyu && \
