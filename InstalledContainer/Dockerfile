@@ -2,6 +2,11 @@ FROM rath3t/ikarus-dev:latest
 
 
 
+
+ARG branch "main"
+ENV BRANCH=${branch}
+
+
 ENV DEBIAN_FRONTEND "noninteractive"
 ENV CI true
 EXPOSE 8000
@@ -13,6 +18,7 @@ EXPOSE 8000
 
 RUN git clone https://github.com/IkarusRepo/Ikarus.git && \
     cd Ikarus && \
+    git checkout ${BRANCH} && \
     mkdir build && \
     cd build && \
     cmake .. && \

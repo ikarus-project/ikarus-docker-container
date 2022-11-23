@@ -7,3 +7,8 @@ This repository contains the commands to create and push the docker image for th
 Rename image tag
 
 `docker commit [CONTAINER_ID]  [REPOSITORY]/[TAG]`
+
+
+To create an Ikarus container wher a specific branch of Ikarus is installed you can use
+
+`docker build --build-arg branch=<branch-name> --squash -t ikarus/<branch-name-must-be-lowercase> . &> build.log`
