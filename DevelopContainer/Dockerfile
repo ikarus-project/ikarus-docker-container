@@ -67,6 +67,7 @@ RUN apt-get update -q -y  && \
   curl \
   cppcheck \
   libayatana-appindicator3-1  \
+  python3-pybind11 \
   libasound2 xvfb
 
 RUN git clone https://github.com/gabime/spdlog.git && \
@@ -134,15 +135,7 @@ RUN git clone https://github.com/gabime/spdlog.git && \
   cmake --build . --parallel 4 --config Release && \
   cmake --install . && \
   cd ~ && \
-  rm -rf matplotplusplus && \
-  git clone https://github.com/autodiff/autodiff && \
-  cd autodiff/ && \
-  mkdir .build && \
-  cd .build/ && \
-  cmake .. -DAUTODIFF_BUILD_PYTHON=0 -DAUTODIFF_BUILD_EXAMPLES=0 -DAUTODIFF_BUILD_DOCS=0 -DAUTODIFF_BUILD_TESTS=0 && \
-   cmake --build . --target install && \
-  cd ~ && \
-  rm -rf autodiff
+  rm -rf matplotplusplus
 
 RUN mkdir -p dune && \
   cd dune && \
@@ -177,6 +170,17 @@ RUN mkdir -p dune && \
   rm -rvf /var/cache/apt/archives/* && \
   apt-get -y remove  \
   software-properties-common
+
+RUN git clone https://github.com/autodiff/autodiff && \
+  cd autodiff/ && \
+  mkdir .build && \
+  cd .build/ && \
+  cmake .. -DAUTODIFF_BUILD_PYTHON=1 -DAUTODIFF_BUILD_EXAMPLES=0 -DAUTODIFF_BUILD_DOCS=0 -DAUTODIFF_BUILD_TESTS=0 -DAUTODIFF_PYTHON_INSTALL_PREFIX="" && \
+  cmake --build . --target install --parallel 8 &&\
+  cd python/package && \
+  pip install . --no-deps --force-reinstall --no-compile && \
+  cd / && \
+  rm -rf autodiff
 
 
 CMD [ "/bin/sh" ]
