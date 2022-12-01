@@ -1,23 +1,24 @@
-# name: Build WSL Docker Images
+ name: Build Development Docker Images
 
-# on:
-#   push:
-#     branches:
-#       - 'main'
+ on:
+   push:
+     branches:
+       - 'main'
 
-# jobs:
-#   build-docker-debian:
-#     runs-on: ubuntu-latest
+ jobs:
+   build-docker-debian:
+     runs-on: ubuntu-latest
 
-#     steps:
-#       - uses: actions/checkout@v2
-#       - name: Build the Docker image
-#         run: docker build . --file Dockerfile --tag rath3t/ikarus-debian-bookworm:latest
-#       - name: Docker Login
-#         uses: azure/docker-login@v1
-#         with:
-#           username: ${{ secrets.DOCKER_USERNAME }}
-#           password: ${{ secrets.DOCKER_PASSWORD }}
-#       - name: Publish the Docker image
-#         if: ${{ github.event_name == 'push'}}
-#         run: docker push rath3t/ikarus-debian-bookworm:latest
+     steps:
+       - uses: actions/checkout@v2
+       - name: Build the Docker image
+         working-directory: ./DevelopContainer
+         run: docker build . --file Dockerfile --tag rath3t/ikarus-dev:latest
+       - name: Docker Login
+         uses: azure/docker-login@v1
+         with:
+           username: ${{ secrets.DOCKER_USERNAME }}
+           password: ${{ secrets.DOCKER_PASSWORD }}
+       - name: Publish the Docker image
+         if: ${{ github.event_name == 'push'}}
+         run: docker push rath3t/ikarus-dev:latest

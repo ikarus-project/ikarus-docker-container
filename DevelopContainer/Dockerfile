@@ -80,15 +80,6 @@ RUN git clone https://github.com/gabime/spdlog.git && \
   cd ~ && \
   rm -rf fmt && \
   cd ~ && \
-  mkdir -p catch2 && \
-  cd catch2 && \
-  git clone https://github.com/catchorg/Catch2.git && \
-  cd Catch2 && \
-  git checkout v3.1.0 && \
-  cmake -Bbuild -H. -DBUILD_TESTING=OFF && \
-  cmake --build build/ --target install && \
-  cd ~ && \
-  rm -rf catch2 && \
   wget https://github.com/jgraph/drawio-desktop/releases/download/v16.5.1/drawio-amd64-16.5.1.deb && \
   dpkg -i drawio-amd64-16.5.1.deb && \
   rm drawio-amd64-16.5.1.deb && \
