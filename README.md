@@ -1,4 +1,4 @@
-This repository contains the commands to create and push the docker image for the creation of docker container to execute [Ikarus](https://ikarusrepo.github.io/)
+This repository contains the commands to create and push the docker image for the creation of docker container to execute [Ikarus](https://ikarus-project.github.io/)
 
 `docker build --squash -t rath3t/ikarus-dev:latest . &> build.log`
 `docker build --squash -t rath3t/ikarus:latest . &> build.log`
