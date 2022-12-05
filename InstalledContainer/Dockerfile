@@ -16,7 +16,7 @@ EXPOSE 8000
 # USER docker
 # WORKDIR /home/docker
 
-RUN git clone https://github.com/IkarusRepo/Ikarus.git && \
+RUN git clone https://github.com/ikarus-project/Ikarus.git && \
     cd Ikarus && \
     git checkout ${BRANCH} && \
     mkdir build && \
