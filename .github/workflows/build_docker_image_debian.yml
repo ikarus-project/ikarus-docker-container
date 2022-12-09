@@ -11,6 +11,8 @@
 
      steps:
        - uses: actions/checkout@v2
+       - name: Get old image
+         run: docker pull rath3t/ikarus-dev:latest
        - name: Build the Development Docker image
          working-directory: ./DevelopContainer
          run: docker build . --file Dockerfile --tag rath3t/ikarus-dev:latest
