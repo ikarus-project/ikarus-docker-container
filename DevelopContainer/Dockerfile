@@ -174,10 +174,11 @@ RUN git clone https://github.com/autodiff/autodiff && \
   cd / && \
   rm -rf autodiff
 
-RUN git clone https://github.com/IkarusRepo/dune-localfefunctions.git && \
-   dunecontrol --cmake-opts="-DCMAKE_BUILD_TYPE=Release -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1" cmake && \
-   dunecontrol make &&   \
-    dunecontrol make install
+RUN git clone https://github.com/ikarus-project/dune-localfefunctions.git && \
+    dunecontrol --cmake-opts="-DCMAKE_BUILD_TYPE=Release -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1" cmake && \
+    dunecontrol make &&   \
+    dunecontrol make install && \
+    rm -rf dune-localfefunctions
 
 
 CMD [ "/bin/sh" ]
