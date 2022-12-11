@@ -68,9 +68,8 @@ RUN apt-get update -q -y  && \
   cppcheck \
   libayatana-appindicator3-1  \
   python3-pybind11 \
-  libasound2 xvfb
-
-RUN git clone https://github.com/gabime/spdlog.git && \
+  libasound2 xvfb && \
+  git clone https://github.com/gabime/spdlog.git && \
   cd spdlog && \
   git checkout v1.10.0 && \
   mkdir build && \
@@ -127,9 +126,8 @@ RUN git clone https://github.com/gabime/spdlog.git && \
   cmake --build . --parallel 4 --config Release && \
   cmake --install . && \
   cd ~ && \
-  rm -rf matplotplusplus
-
-RUN mkdir -p dune && \
+  rm -rf matplotplusplus %% \
+  mkdir -p dune && \
   cd dune && \
   git clone https://gitlab.dune-project.org/extensions/dune-alugrid.git && \
   git clone https://gitlab.dune-project.org/extensions/dune-foamgrid.git && \
@@ -161,9 +159,8 @@ RUN mkdir -p dune && \
   rm -rvf /var/lib/apt/lists/* && \
   rm -rvf /var/cache/apt/archives/* && \
   apt-get -y remove  \
-  software-properties-common
-
-RUN git clone https://github.com/autodiff/autodiff && \
+  software-properties-common && \
+  git clone https://github.com/autodiff/autodiff && \
   cd autodiff/ && \
   mkdir .build && \
   cd .build/ && \
@@ -172,13 +169,12 @@ RUN git clone https://github.com/autodiff/autodiff && \
   cd python/package && \
   pip install . --no-deps --force-reinstall --no-compile && \
   cd / && \
-  rm -rf autodiff
-
-RUN git clone https://github.com/ikarus-project/dune-localfefunctions.git && \
+  rm -rf autodiff && \
+  git clone https://github.com/ikarus-project/dune-localfefunctions.git && \
     dunecontrol --cmake-opts="-DCMAKE_BUILD_TYPE=Release -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1" cmake && \
     dunecontrol make &&   \
     dunecontrol make install && \
-    rm -rf dune-localfefunctions
+          rm -rf dune-localfefunctions
 
 
 CMD [ "/bin/sh" ]
