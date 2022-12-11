@@ -24,6 +24,7 @@ RUN apt-get update -q -y  && \
   gfortran \
   gcc-12 \
   g++-12 \
+  cmake \
   gdb  \
   lldb \
   lcov \
@@ -34,6 +35,7 @@ RUN apt-get update -q -y  && \
   libgbm1 \
   libmetis-dev \
   libnss3 \
+  pkg-config \
   libxss1 \
   libxtst6 \
   libsecret-1-0 \
@@ -47,17 +49,6 @@ RUN apt-get update -q -y  && \
   liblapack-dev \
   libopenblas-dev \
   libsuitesparse-dev \
-  libdune-common-dev \
-  libdune-geometry-dev \
-  libdune-grid-dev \
-  libdune-functions-dev \
-  libdune-typetree-dev \
-  libdune-localfunctions-dev \
-  libdune-uggrid-dev \
-  libdune-grid-glue-dev \
-  libdune-istl-dev \
-  libbenchmark-dev \
-  libgtest-dev \
   libquadmath0 \
   gnuplot \
   python3 \
@@ -104,9 +95,6 @@ RUN apt-get update -q -y  && \
   make install && \
   cd ~ && \
   rm -rf iwyu && \
-  cd /usr/src/googletest && \
-  cmake . && \
-  cmake --build . --target install && \
   cd ~ && \
   git clone https://gitlab.com/libeigen/eigen.git && \
   cd eigen && \
@@ -126,14 +114,23 @@ RUN apt-get update -q -y  && \
   cmake --build . --parallel 4 --config Release && \
   cmake --install . && \
   cd ~ && \
-  rm -rf matplotplusplus %% \
+  rm -rf matplotplusplus && \
   mkdir -p dune && \
   cd dune && \
+  git clone https://gitlab.dune-project.org/core/dune-common.git && \
+  git clone https://gitlab.dune-project.org/core/dune-geometry.git && \
+  git clone https://gitlab.dune-project.org/core/dune-istl.git && \
+  git clone https://gitlab.dune-project.org/core/dune-grid.git && \
+  git clone https://gitlab.dune-project.org/staging/dune-uggrid.git && \
+  git clone https://gitlab.dune-project.org/staging/dune-functions.git && \
+  git clone https://gitlab.dune-project.org/staging/dune-typetree.git && \
+  git clone https://gitlab.dune-project.org/core/dune-localfunctions.git && \
   git clone https://gitlab.dune-project.org/extensions/dune-alugrid.git && \
   git clone https://gitlab.dune-project.org/extensions/dune-foamgrid.git && \
   git clone https://git.imp.fu-berlin.de/agnumpde/dune-matrix-vector.git && \
+  git clone https://gitlab.dune-project.org/extensions/dune-grid-glue.git && \
   git clone https://git.imp.fu-berlin.de/agnumpde/dune-fufem.git && \
-  dunecontrol git checkout releases/2.8 && \
+  dune-common/bin/dunecontrol git checkout releases/2.8 && \
   sed -i '15 i add_subdirectory("cmake/modules")' dune-fufem/CMakeLists.txt && \
   sed -i 's/set(modules "DuneFufemMacros.cmake")/set(modules "DuneFufemMacros.cmake" "AddPythonLibsFlags.cmake" "AddAdolcFlags.cmake" "AddHDF5Flags.cmake" "FindAdolc.cmake")/' dune-fufem/cmake/modules/CMakeLists.txt && \
   git clone https://github.com/rath3t/dune-iga.git && \
@@ -144,9 +141,9 @@ RUN apt-get update -q -y  && \
   cd dune-vtk && \
   git checkout releases/2.8 && \
   cd .. && \
-  dunecontrol cmake "-DCMAKE_BUILD_TYPE=Release" && \
-  dunecontrol make && \
-  dunecontrol make install && \
+  ./dune-common/bin/dunecontrol cmake "-DCMAKE_BUILD_TYPE=Release" && \
+  ./dune-common/bin/dunecontrol make && \
+  ./dune-common/bin/dunecontrol make install && \
   cd .. && \
   rm -rf dune && \
   git clone https://github.com/dmillard/eigengdb && \
@@ -154,12 +151,6 @@ RUN apt-get update -q -y  && \
   python3.10 setup.py install && \
   python3.10 bin/eigengdb_register_printers && \
   gdb -q -iex "add-auto-load-safe-path /tmp/Ikarus/.gdbinit" && \
-  apt-get auto-remove -y && \
-  apt-get clean && \
-  rm -rvf /var/lib/apt/lists/* && \
-  rm -rvf /var/cache/apt/archives/* && \
-  apt-get -y remove  \
-  software-properties-common && \
   git clone https://github.com/autodiff/autodiff && \
   cd autodiff/ && \
   mkdir .build && \
@@ -171,10 +162,16 @@ RUN apt-get update -q -y  && \
   cd / && \
   rm -rf autodiff && \
   git clone https://github.com/ikarus-project/dune-localfefunctions.git && \
-    dunecontrol --cmake-opts="-DCMAKE_BUILD_TYPE=Release -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1" cmake && \
-    dunecontrol make &&   \
-    dunecontrol make install && \
-          rm -rf dune-localfefunctions
+  dunecontrol --cmake-opts="-DCMAKE_BUILD_TYPE=Release -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1" cmake && \
+  dunecontrol make &&   \
+  dunecontrol make install && \
+  rm -rf dune-localfefunctions && \
+  apt-get auto-remove -y && \
+  apt-get clean && \
+  rm -rvf /var/lib/apt/lists/* && \
+  rm -rvf /var/cache/apt/archives/* && \
+  apt-get -y remove  \
+  software-properties-common
 
 
 CMD [ "/bin/sh" ]
