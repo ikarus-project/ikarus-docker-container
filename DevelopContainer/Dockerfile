@@ -49,7 +49,9 @@ RUN apt-get update -q -y  && \
   liblapack-dev \
   libopenblas-dev \
   libsuitesparse-dev \
+  libsuperlu-dev \
   libquadmath0 \
+  libopenmpi-dev \
   gnuplot \
   python3 \
   python3-dev \
