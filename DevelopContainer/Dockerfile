@@ -81,6 +81,7 @@ RUN apt-get update -q -y  && \
   pip install --no-cache-dir mkdocs-macros-plugin && \
   pip install --no-cache-dir mkdocs-drawio-exporter && \
   pip install --no-cache-dir mkdocs-bibtex && \
+  pip install --no-cache-dir mkdocs-glightbox && \
   pip install --no-cache-dir codespell && \
   pip install --no-cache-dir pillow cairosvg && \
   cp /usr/bin/clang-format-13 /usr/bin/clang-format && \
