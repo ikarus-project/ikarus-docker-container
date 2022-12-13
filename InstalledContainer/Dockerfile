@@ -21,7 +21,7 @@ RUN git clone https://github.com/ikarus-project/Ikarus.git && \
     git checkout ${BRANCH} && \
     mkdir build && \
     cd build && \
-    cmake .. && \
+    cmake .. -DCMAKE_BUILD_TYPE=Release && \
     cmake --build . --target ikarus && \
     cmake --install . && \
     cd ../.. && \
