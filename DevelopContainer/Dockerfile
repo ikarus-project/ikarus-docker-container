@@ -84,6 +84,7 @@ RUN apt-get update -q -y  && \
   pip install --no-cache-dir mkdocs-glightbox && \
   pip install --no-cache-dir codespell && \
   pip install --no-cache-dir pillow cairosvg && \
+  pip install --no-cache-dir numpy && \
   cp /usr/bin/clang-format-13 /usr/bin/clang-format && \
   cd ~ && \
   mkdir -p iwyu && \
@@ -133,18 +134,16 @@ RUN apt-get update -q -y  && \
   git clone https://git.imp.fu-berlin.de/agnumpde/dune-matrix-vector.git && \
   git clone https://gitlab.dune-project.org/extensions/dune-grid-glue.git && \
   git clone https://git.imp.fu-berlin.de/agnumpde/dune-fufem.git && \
-  dune-common/bin/dunecontrol git checkout releases/2.8 && \
-  sed -i '15 i add_subdirectory("cmake/modules")' dune-fufem/CMakeLists.txt && \
-  sed -i 's/set(modules "DuneFufemMacros.cmake")/set(modules "DuneFufemMacros.cmake" "AddPythonLibsFlags.cmake" "AddAdolcFlags.cmake" "AddHDF5Flags.cmake" "FindAdolc.cmake")/' dune-fufem/cmake/modules/CMakeLists.txt && \
+  dune-common/bin/dunecontrol git checkout releases/2.9 && \
   git clone https://github.com/rath3t/dune-iga.git && \
   cd dune-iga && \
   git checkout main && \
   cd .. && \
   git clone https://gitlab.dune-project.org/extensions/dune-vtk.git && \
   cd dune-vtk && \
-  git checkout releases/2.8 && \
+  git checkout releases/2.9 && \
   cd .. && \
-  ./dune-common/bin/dunecontrol cmake "-DCMAKE_BUILD_TYPE=Release" && \
+  ./dune-common/bin/dunecontrol --cmake-opts="-DCMAKE_BUILD_TYPE=Release -DDUNE_PYTHON_ALLOW_GET_PIP=1" cmake && \
   ./dune-common/bin/dunecontrol make && \
   ./dune-common/bin/dunecontrol make install && \
   cd .. && \
@@ -165,6 +164,9 @@ RUN apt-get update -q -y  && \
   cd / && \
   rm -rf autodiff && \
   git clone https://github.com/ikarus-project/dune-localfefunctions.git && \
+  cd dune-localfefunctions && \
+  git checkout main && \
+  cd .. && \
   dunecontrol --cmake-opts="-DCMAKE_BUILD_TYPE=Release -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1" cmake && \
   dunecontrol make &&   \
   dunecontrol make install && \
