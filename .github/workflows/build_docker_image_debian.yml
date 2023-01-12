@@ -13,7 +13,7 @@
        - uses: actions/checkout@v2
        - name: Build the Development Docker image
          working-directory: ./DevelopContainer
-         run: docker build . --file Dockerfile --tag rath3t/ikarus-dev:latest
+         run: docker build . --file Dockerfile --tag ikarusproject/ikarus-dev:latest
        - name: Docker Login
          uses: azure/docker-login@v1
          with:
@@ -21,10 +21,10 @@
            password: ${{ secrets.DOCKER_PASSWORD }}
        - name: Publish the Docker image
          if: ${{ github.event_name == 'push'}}
-         run: docker push rath3t/ikarus-dev:latest
+         run: docker push ikarusproject/ikarus-dev:latest
        - name: Build the Installed Docker image
          working-directory: ./InstalledContainer
-         run: docker build . --file Dockerfile --tag rath3t/ikarus:latest
+         run: docker build . --file Dockerfile --tag ikarusproject/ikarus:latest
        - name: Docker Login
          uses: azure/docker-login@v1
          with:
@@ -32,4 +32,4 @@
            password: ${{ secrets.DOCKER_PASSWORD }}
        - name: Publish the Docker image
          if: ${{ github.event_name == 'push'}}
-         run: docker push rath3t/ikarus:latest         
+         run: docker push ikarusproject/ikarus:latest         
