@@ -1,8 +1,7 @@
 This repository contains the commands to create and push the docker image for the creation of docker container to execute [Ikarus](https://ikarus-project.github.io/)
 
-`docker build --squash -t rath3t/ikarus-dev:latest . &> build.log`
-`docker build --squash -t rath3t/ikarus:latest . &> build.log`
-`docker push rath3t/ikarus-debian-bookworm:latest`
+`docker build --squash -t ikarusproject/ikarus-dev:latest . &> build.log`
+`docker build --squash -t ikarusproject/ikarus:latest . &> build.log`
 
 Rename image tag
 
@@ -11,6 +10,6 @@ Rename image tag
 
 To create an Ikarus container where a specific branch of Ikarus is installed you can use
 
-`docker build --build-arg branch=<branch-name> --squash -t ikarus/<branch-name-must-be-lowercase> . &> build.log`
+`docker build --build-arg branch=<branch-name> --squash -t ikarusproject/<branch-name-must-be-lowercase> . &> build.log`
 
 inside the InstalledContainer directory.
