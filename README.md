@@ -13,3 +13,12 @@ To create an Ikarus container where a specific branch of Ikarus is installed you
 `docker build --build-arg branch=<branch-name> --squash -t ikarusproject/<branch-name-must-be-lowercase> . &> build.log`
 
 inside the InstalledContainer directory.
+
+
+
+docker build --build-arg UID=$(id -u) --squash -t rath3t/ikarus-dev:latest . &> build.log
+
+docker build --build-arg UID=$(id -u) --build-arg branch=pythonBindings --squash -t rath3t/ikarus-dev:pythonBindings .
+docker build --build-arg UID=$(id -u) --build-arg branch=pythonBindings --squash -t rath3t/ikarus:pythonBindings .
+
+docker build --squash -t rath3t/ikarus-dev:pythonBindings . &> build.log
