@@ -1,6 +1,6 @@
 FROM debian:bookworm-slim
 
-
+MAINTAINER mueller@ibb.uni-stuttgart.de
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV CI true
@@ -8,14 +8,17 @@ EXPOSE 8000
 ENV DISPLAY=:0
 ENV LD_LIBRARY_PATH=/usr/lib/wsl/lib
 
-# WORKDIR $HOME
-# RUN useradd --create-home --no-log-init --shell /bin/bash docker
-# USER docker
-# WORKDIR /home/docker
+RUN apt-get update -q -y  && apt-get -y --no-install-recommends install wget build-essential libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev
 
-RUN apt-get update -q -y  && \
-     apt-get update && \
-   apt-get -y --no-install-recommends install build-essential \
+RUN   wget --no-check-certificate -cq https://www.python.org/ftp/python/3.10.9/Python-3.10.9.tar.xz && \
+  tar -Jxf Python-3.10.9.tar.xz &&\
+  cd Python-3.10.9 &&\
+  ./configure --enable-optimizations --prefix=/usr --enable-shared &&\
+  make install 
+
+RUN  update-alternatives --install /usr/bin/python python /usr/bin/python3.10 10
+
+RUN apt-get -y --no-install-recommends install build-essential \
   libssl-dev \
   git \
   wget \
@@ -52,15 +55,31 @@ RUN apt-get update -q -y  && \
   libsuperlu-dev \
   libquadmath0 \
   libopenmpi-dev \
-  gnuplot \
-  python3 \
-  python3-dev \
-  pip \
+  gnuplot 
+
+  RUN  python -m pip install --upgrade pip && \
+  python -m pip install --no-cache-dir virtualenv \
+  cmakelang==0.6.13 \
+  pyyaml \
+  mkdocs \
+  mkdocs-material \
+  mkdocs-macros-plugin \
+  mkdocs-bibtex \
+  mkdocs-glightbox \
+  codespell \
+  pillow \
+  cairosvg \
+  "pybind11[global]" \
+  scikit-build \
+  numpy \
+  scipy \
+  mpi4py
+
+  RUN apt-get -y --no-install-recommends install \
   gnuplot-x11 \
   curl \
   cppcheck \
   libayatana-appindicator3-1  \
-  python3-pybind11 \
   libasound2 xvfb && \
   git clone https://github.com/gabime/spdlog.git && \
   cd spdlog && \
@@ -72,19 +91,6 @@ RUN apt-get update -q -y  && \
   cd ~ && \
   rm -rf fmt && \
   cd ~ && \
-  wget https://github.com/jgraph/drawio-desktop/releases/download/v16.5.1/drawio-amd64-16.5.1.deb && \
-  dpkg -i drawio-amd64-16.5.1.deb && \
-  rm drawio-amd64-16.5.1.deb && \
-  pip install --no-cache-dir cmakelang==0.6.13 pyyaml && \
-  pip install --no-cache-dir mkdocs && \
-  pip install --no-cache-dir mkdocs-material && \
-  pip install --no-cache-dir mkdocs-macros-plugin && \
-  pip install --no-cache-dir mkdocs-drawio-exporter && \
-  pip install --no-cache-dir mkdocs-bibtex && \
-  pip install --no-cache-dir mkdocs-glightbox && \
-  pip install --no-cache-dir codespell && \
-  pip install --no-cache-dir pillow cairosvg && \
-  pip install --no-cache-dir numpy && \
   cp /usr/bin/clang-format-13 /usr/bin/clang-format && \
   cd ~ && \
   mkdir -p iwyu && \
@@ -114,12 +120,14 @@ RUN apt-get update -q -y  && \
   git checkout v1.1.0 && \
   mkdir -p build && \
   cd build && \
-  cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF && \
+  cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_SHARED_LIBS=1 && \
   cmake --build . --parallel 4 --config Release && \
   cmake --install . && \
   cd ~ && \
-  rm -rf matplotplusplus && \
-  mkdir -p dune && \
+  rm -rf matplotplusplus
+
+
+RUN mkdir -p dune && \
   cd dune && \
   git clone https://gitlab.dune-project.org/core/dune-common.git && \
   git clone https://gitlab.dune-project.org/core/dune-geometry.git && \
@@ -131,23 +139,40 @@ RUN apt-get update -q -y  && \
   git clone https://gitlab.dune-project.org/core/dune-localfunctions.git && \
   git clone https://gitlab.dune-project.org/extensions/dune-alugrid.git && \
   git clone https://gitlab.dune-project.org/extensions/dune-foamgrid.git && \
-  git clone https://git.imp.fu-berlin.de/agnumpde/dune-matrix-vector.git && \
+  git clone https://gitlab.dune-project.org/fufem/dune-matrix-vector.git && \
   git clone https://gitlab.dune-project.org/extensions/dune-grid-glue.git && \
-  git clone https://git.imp.fu-berlin.de/agnumpde/dune-fufem.git && \
-  dune-common/bin/dunecontrol git checkout releases/2.9 && \
+  git clone https://gitlab.dune-project.org/fufem/dune-fufem.git  && \
+  dune-common/bin/dunecontrol git checkout releases/2.9 
+
+  RUN ls /usr/include/python3.10/
+
+  RUN cd dune && \
+  cd dune-common/cmake/modules &&\
+  sed -i 's/set(WHEEL_COMMAND ${DUNE_PYTHON_VIRTUALENV_EXECUTABLE} -m pip wheel -w ${DUNE_PYTHON_WHEELHOUSE}/set(WHEEL_COMMAND ${DUNE_PYTHON_VIRTUALENV_EXECUTABLE} -m pip wheel -w ${DUNE_PYTHON_WHEELHOUSE} --no-deps/g' DunePythonInstallPackage.cmake && \
+  cd / && \
+  cd dune && \
   git clone https://github.com/rath3t/dune-iga.git && \
-  cd dune-iga && \
+  cd dune-iga  && \
   git checkout main && \
+  cd / && \
+  cd dune && \
+  cd dune-foamgrid &&\
+  git checkout master && \
   cd .. && \
   git clone https://gitlab.dune-project.org/extensions/dune-vtk.git && \
   cd dune-vtk && \
   git checkout releases/2.9 && \
   cd .. && \
-  ./dune-common/bin/dunecontrol --cmake-opts="-DCMAKE_BUILD_TYPE=Release -DDUNE_PYTHON_ALLOW_GET_PIP=1" cmake && \
-  ./dune-common/bin/dunecontrol make && \
-  ./dune-common/bin/dunecontrol make install && \
+  git clone https://github.com/ikarus-project/dune-localfefunctions.git && \
+  cd dune-localfefunctions && \
+  git checkout main && \
   cd .. && \
-  rm -rf dune
+  ./dune-common/bin/dunecontrol   --cmake-opts="-DPython3_EXECUTABLE=/usr/bin/python -DPython3_INCLUDE_DIRS=/usr/include/python3.10/ -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1 -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_PYTHON_VIRTUALENV_SETUP=TRUE -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -DCXX_MAX_STANDARD=20" cmake && \
+  ./dune-common/bin/dunecontrol make
+
+    RUN  cat /dune/dune-common/build-cmake/python/dune/data/dune-common.cmake
+
+RUN  update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 10
 RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
   cd Clipper2/CPP && \
   git checkout Clipper2_1.0.6 && \
@@ -155,6 +180,8 @@ RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
   cd build && \
   cmake .. -DCLIPPER2_TESTS=0 -DBUILD_SHARED_LIBS=ON -DCLIPPER2_EXAMPLES=0 && \
   cmake --build . --target install --parallel 2 && \
+  cd / && \
+  rm -rf Clipper2 && \
   git clone https://github.com/dmillard/eigengdb && \
   cd eigengdb && \
   python3.10 setup.py install && \
@@ -167,17 +194,9 @@ RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
   cmake .. -DAUTODIFF_BUILD_PYTHON=1 -DAUTODIFF_BUILD_EXAMPLES=0 -DAUTODIFF_BUILD_DOCS=0 -DAUTODIFF_BUILD_TESTS=0 -DAUTODIFF_PYTHON_INSTALL_PREFIX="" && \
   cmake --build . --target install --parallel 2 &&\
   cd python/package && \
-  pip install . --no-deps --force-reinstall --no-compile && \
+  python -m pip install . --no-deps --force-reinstall --no-compile && \
   cd / && \
   rm -rf autodiff && \
-  git clone https://github.com/ikarus-project/dune-localfefunctions.git && \
-  cd dune-localfefunctions && \
-  git checkout main && \
-  cd .. && \
-  dunecontrol --cmake-opts="-DCMAKE_BUILD_TYPE=Release -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1" cmake && \
-  dunecontrol make &&   \
-  dunecontrol make install && \
-  rm -rf dune-localfefunctions && \
   apt-get auto-remove -y && \
   apt-get clean && \
   rm -rvf /var/lib/apt/lists/* && \
@@ -185,5 +204,35 @@ RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
   apt-get -y remove  \
   software-properties-common
 
+ENV CMAKE_PREFIX_PATH /dune/dune-geometry/build-cmake:/dune/dune-matrix-vector/build-cmake:/dune/dune-functions/build-cmake:/dune/dune-common/build-cmake:/dune/dune-localfunctions/build-cmake:/dune/dune-alugrid/build-cmake:/dune/dune-fufem/build-cmake:/dune/dune-typetree/build-cmake:/dune/dune-uggrid/build-cmake:/dune/dune-grid/build-cmake:/dune/dune-foamgrid/build-cmake:/dune/dune-istl/build-cmake:/dune/dune-grid-glue/build-cmake:/dune/dune-iga/build-cmake:/dune/dune-vtk/build-cmake:/dune/dune-localfefunctions/build-cmake:
+
+RUN git clone --branch v3.11.2 --depth 1 https://github.com/nlohmann/json.git && \
+    cd json && \
+    mkdir build && \
+    cd build && \
+    cmake .. -DJSON_BuildTests=0 &&  \
+    make &&  \
+    make install 
+
+RUN git clone --branch master --depth 1 https://github.com/mapbox/earcut.hpp.git  && \
+    cd earcut.hpp && \
+    mkdir build && \
+    cd build && \
+    cmake .. -DEARCUT_BUILD_TESTS=OFF -DEARCUT_BUILD_BENCH=OFF -DEARCUT_BUILD_VIZ=OFF && \
+    cmake --build . --target install
+
+ARG UID=1001
+ARG GID=1001
+
+RUN groupadd -r --gid $GID user \
+ && useradd --no-log-init --create-home -g user -r --uid $UID user \
+ && yes 1 | passwd user \
+ && mkdir -p /etc/sudoers.d \
+ && echo "user ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/user \
+ && chmod 0440 /etc/sudoers.d/user
+
+RUN chown -R $UID:$GID /dune 
+
+USER user
 
 CMD [ "/bin/sh" ]

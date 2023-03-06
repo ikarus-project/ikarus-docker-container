@@ -1,6 +1,7 @@
-FROM rath3t/ikarus-dev:latest
+FROM rath3t/ikarus-dev:pythonBindings
 
 
+USER root
 
 
 ARG branch "main"
@@ -16,17 +17,25 @@ EXPOSE 8000
 # USER docker
 # WORKDIR /home/docker
 
+
 RUN git clone https://github.com/ikarus-project/Ikarus.git && \
     cd Ikarus && \
     git checkout ${BRANCH} && \
     mkdir build && \
     cd build && \
-    cmake .. -DCMAKE_BUILD_TYPE=Release && \
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_PYTHON_VIRTUALENV_SETUP=TRUE -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE && \
     cmake --build . --target ikarus && \
     cmake --install . && \
     cd ../.. && \
     rm -rf Ikarus
 
+
+# ARG UID=1000
+# USER builder
+
+RUN echo $(whoami)
+
+RUN ls -la /usr/local/share/dune/wheelhouse
 
 CMD [ "/bin/sh" ]
 
