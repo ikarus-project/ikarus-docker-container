@@ -25,10 +25,7 @@ RUN git clone https://github.com/ikarus-project/Ikarus.git && \
     cd build && \
     cmake .. -DCMAKE_BUILD_TYPE=Release -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_PYTHON_VIRTUALENV_SETUP=TRUE -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE && \
     cmake --build . --target ikarus && \
-    cmake --install . && \
-    cd ../.. && \
-    rm -rf Ikarus
-
+    cmake --install . 
 
 # ARG UID=1000
 # USER builder
