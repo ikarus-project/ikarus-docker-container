@@ -27,12 +27,7 @@ RUN git clone https://github.com/ikarus-project/Ikarus.git && \
     cmake --build . --target ikarus && \
     cmake --install . 
 
-# ARG UID=1000
-# USER builder
 
-RUN echo $(whoami)
-
-RUN ls -la /usr/local/share/dune/wheelhouse
 
 CMD [ "/bin/sh" ]
 
