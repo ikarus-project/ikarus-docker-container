@@ -1,4 +1,4 @@
-FROM rath3t/ikarus-dev:pythonBindings
+FROM ikarusproject/ikarus-dev:latest
 
 
 USER root
