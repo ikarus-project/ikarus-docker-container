@@ -32,6 +32,7 @@ RUN apt-get -y --no-install-recommends install build-essential \
   lldb \
   lcov \
   gcovr \
+  nano \
   valgrind \
   mesa-utils \
   clang \
