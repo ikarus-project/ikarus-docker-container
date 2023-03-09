@@ -73,7 +73,9 @@ RUN apt-get -y --no-install-recommends install build-essential \
   scikit-build \
   numpy \
   scipy \
-  mpi4py
+  mpi4py \
+  twine \
+  matplotlib
 
   RUN apt-get -y --no-install-recommends install \
   gnuplot-x11 \
@@ -148,7 +150,6 @@ RUN mkdir -p dune && \
 
   RUN cd dune && \
   cd dune-common/cmake/modules &&\
-  sed -i 's/set(WHEEL_COMMAND ${DUNE_PYTHON_VIRTUALENV_EXECUTABLE} -m pip wheel -w ${DUNE_PYTHON_WHEELHOUSE}/set(WHEEL_COMMAND ${DUNE_PYTHON_VIRTUALENV_EXECUTABLE} -m pip wheel -w ${DUNE_PYTHON_WHEELHOUSE} --no-deps/g' DunePythonInstallPackage.cmake && \
   cd / && \
   cd dune && \
   git clone https://github.com/rath3t/dune-iga.git && \
