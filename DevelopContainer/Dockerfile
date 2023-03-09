@@ -151,6 +151,7 @@ RUN mkdir -p dune && \
 
   RUN cd dune && \
   cd dune-common/cmake/modules &&\
+  sed -i 's/install(FILES ${CMAKE_CURRENT_BINARY_DIR}\/${LINKDUNEPY_CMAKE_METADATA_FILE} DESTINATION python\/dune\/data)/get_filename_component(LINKDUNEPY_CMAKE_METADATA_FILE_DIR ${LINKDUNEPY_CMAKE_METADATA_FILE} DIRECTORY ) \n    install(FILES ${CMAKE_CURRENT_BINARY_DIR}\/${LINKDUNEPY_CMAKE_METADATA_FILE} DESTINATION python\/${LINKDUNEPY_CMAKE_METADATA_FILE_DIR})/g' DunePythonInstallPackage.cmake && \
   cd / && \
   cd dune && \
   git clone https://github.com/rath3t/dune-iga.git && \
@@ -235,6 +236,16 @@ RUN groupadd -r --gid $GID user \
 
 RUN chown -R $UID:$GID /dune 
 
+# use python venv on start up
+USER user
+ENV VIRTUAL_ENV=/dune/dune-common/build-cmake/dune-env/
+
+RUN python3 -m venv  $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+COPY entrypoint.sh /entrypoint.sh
+USER root
+RUN chmod +x /entrypoint.sh
 USER user
 
-CMD [ "/bin/sh" ]
+ENTRYPOINT ["/entrypoint.sh"]
