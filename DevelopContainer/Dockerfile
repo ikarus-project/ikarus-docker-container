@@ -197,7 +197,7 @@ RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
   cmake .. -DAUTODIFF_BUILD_PYTHON=1 -DAUTODIFF_BUILD_EXAMPLES=0 -DAUTODIFF_BUILD_DOCS=0 -DAUTODIFF_BUILD_TESTS=0 -DAUTODIFF_PYTHON_INSTALL_PREFIX="" && \
   cmake --build . --target install --parallel 2 &&\
   cd python/package && \
-  python -m pip install . --no-deps --force-reinstall --no-compile && \
+  /dune/dune-common/build-cmake/run-in-dune-env python -m pip install . --no-deps --force-reinstall --no-compile && \
   cd / && \
   rm -rf autodiff && \
   apt-get auto-remove -y && \
