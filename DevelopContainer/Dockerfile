@@ -14,7 +14,11 @@ RUN   wget --no-check-certificate -cq https://www.python.org/ftp/python/3.10.9/P
   tar -Jxf Python-3.10.9.tar.xz &&\
   cd Python-3.10.9 &&\
   ./configure --enable-optimizations --prefix=/usr --enable-shared &&\
-  make install 
+  make install && \
+  cd .. && \
+  rm -rf Python-3.10.9 && \
+  rm Python-3.10.9.tar.xz
+
 
 RUN  update-alternatives --install /usr/bin/python python /usr/bin/python3.10 10
 
@@ -172,8 +176,6 @@ RUN mkdir -p dune && \
   cd .. && \
   ./dune-common/bin/dunecontrol   --cmake-opts="-DPython3_EXECUTABLE=/usr/bin/python -DPython3_INCLUDE_DIRS=/usr/include/python3.10/ -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1 -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_PYTHON_VIRTUALENV_SETUP=TRUE -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -DCXX_MAX_STANDARD=20" cmake && \
   ./dune-common/bin/dunecontrol make
-
-    RUN  cat /dune/dune-common/build-cmake/python/dune/data/dune-common.cmake
 
 RUN  update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 10
 RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
