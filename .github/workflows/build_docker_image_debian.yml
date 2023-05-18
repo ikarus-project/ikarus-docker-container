@@ -22,8 +22,8 @@
            username: ${{ secrets.DOCKER_USERNAME }}
            password: ${{ secrets.DOCKER_PASSWORD }}
        - name: Publish the Docker image
-         if: ${{ github.event_name == 'push'}}
          run: docker push ikarusproject/ikarus-dev:latest
+         
        - name: Build the Installed Docker image
          working-directory: ./InstalledContainer
          run: docker build . --file Dockerfile --tag ikarusproject/ikarus:latest
@@ -33,7 +33,6 @@
            username: ${{ secrets.DOCKER_USERNAME }}
            password: ${{ secrets.DOCKER_PASSWORD }}
        - name: Publish the Docker image
-         if: ${{ github.event_name == 'push'}}
          run: docker push ikarusproject/ikarus:latest       
 
        - name: Build the GrassHopperServer images
@@ -45,5 +44,4 @@
            username: ${{ secrets.DOCKER_USERNAME }}
            password: ${{ secrets.DOCKER_PASSWORD }}
        - name: Publish the Docker image
-         if: ${{ github.event_name == 'push'}}
          run: docker push ikarusproject/ikarus-grasshopper:latest               
