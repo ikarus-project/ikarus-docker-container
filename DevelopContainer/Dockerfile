@@ -1,138 +1,12 @@
-FROM debian:bookworm-slim
+FROM ikarusproject/debian:latest
 
-MAINTAINER mueller@ibb.uni-stuttgart.de
+LABEL org.opencontainers.image.authors="mueller@ibb.uni-stuttgart.de"
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV CI true
 EXPOSE 8000
 ENV DISPLAY=:0
 ENV LD_LIBRARY_PATH=/usr/lib/wsl/lib
-
-RUN apt-get update -q -y  && apt-get -y --no-install-recommends install wget build-essential libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev
-
-RUN   wget --no-check-certificate -cq https://www.python.org/ftp/python/3.10.9/Python-3.10.9.tar.xz && \
-  tar -Jxf Python-3.10.9.tar.xz &&\
-  cd Python-3.10.9 &&\
-  ./configure --enable-optimizations --prefix=/usr --enable-shared &&\
-  make install && \
-  cd .. && \
-  rm -rf Python-3.10.9 && \
-  rm Python-3.10.9.tar.xz
-
-
-RUN  update-alternatives --install /usr/bin/python python /usr/bin/python3.10 10
-
-RUN apt-get -y --no-install-recommends install build-essential \
-  libssl-dev \
-  git \
-  wget \
-  apt-utils \
-  software-properties-common \
-  gfortran \
-  gcc-12 \
-  g++-12 \
-  cmake \
-  gdb  \
-  lldb \
-  lcov \
-  gcovr \
-  nano \
-  valgrind \
-  mesa-utils \
-  clang \
-  libgbm1 \
-  libmetis-dev \
-  libnss3 \
-  pkg-config \
-  libxss1 \
-  libxtst6 \
-  libsecret-1-0 \
-  xdg-utils \
-  clang-tidy \
-  libclang-14-dev \
-  clang-format-13 \
-  libc++-14-dev \
-  libc++abi-14-dev \
-  llvm-14-dev \
-  liblapack-dev \
-  libopenblas-dev \
-  libsuitesparse-dev \
-  libsuperlu-dev \
-  libquadmath0 \
-  libopenmpi-dev \
-  gnuplot 
-
-  RUN  python -m pip install --upgrade pip && \
-  python -m pip install --no-cache-dir virtualenv \
-  cmakelang==0.6.13 \
-  pyyaml \
-  mkdocs \
-  mkdocs-material \
-  mkdocs-macros-plugin \
-  mkdocs-bibtex \
-  mkdocs-glightbox \
-  codespell \
-  pillow \
-  cairosvg \
-  "pybind11[global]" \
-  scikit-build \
-  numpy \
-  scipy \
-  mpi4py \
-  twine \
-  matplotlib
-
-  RUN apt-get -y --no-install-recommends install \
-  gnuplot-x11 \
-  curl \
-  cppcheck \
-  libayatana-appindicator3-1  \
-  libasound2 xvfb && \
-  git clone https://github.com/gabime/spdlog.git && \
-  cd spdlog && \
-  git checkout v1.10.0 && \
-  mkdir build && \
-  cd build && \
-  cmake .. -DSPDLOG_FMT_EXTERNAL=FALSE && \
-  make install && \
-  cd ~ && \
-  rm -rf fmt && \
-  cd ~ && \
-  cp /usr/bin/clang-format-13 /usr/bin/clang-format && \
-  cd ~ && \
-  mkdir -p iwyu && \
-  cd iwyu && \
-  git clone https://github.com/include-what-you-use/include-what-you-use.git && \
-  cd include-what-you-use && \
-  git checkout clang_14 && \
-  cd .. && \
-  mkdir -p build && cd build && \
-  cmake -G "Unix Makefiles" -DIWYU_LLVM_ROOT_PATH=/usr/lib/llvm-14 ../include-what-you-use && \
-  make && \
-  make install && \
-  cd ~ && \
-  rm -rf iwyu && \
-  cd ~ && \
-  git clone https://gitlab.com/libeigen/eigen.git && \
-  cd eigen && \
-  git checkout 3.4 && \
-  mkdir build && \
-  cd build && \
-  cmake ../ && \
-  make install && \
-  cd ~ && \
-  rm -rf eigen && \
-  git clone https://github.com/alandefreitas/matplotplusplus.git && \
-  cd matplotplusplus && \
-  git checkout v1.1.0 && \
-  mkdir -p build && \
-  cd build && \
-  cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_SHARED_LIBS=1 && \
-  cmake --build . --parallel 4 --config Release && \
-  cmake --install . && \
-  cd ~ && \
-  rm -rf matplotplusplus
-
 
 RUN mkdir -p dune && \
   cd dune && \
@@ -151,13 +25,7 @@ RUN mkdir -p dune && \
   git clone https://gitlab.dune-project.org/fufem/dune-fufem.git  && \
   dune-common/bin/dunecontrol git checkout releases/2.9 
 
-  RUN ls /usr/include/python3.10/
-
   RUN cd dune && \
-  cd dune-common/cmake/modules &&\
-  sed -i 's/install(FILES ${CMAKE_CURRENT_BINARY_DIR}\/${LINKDUNEPY_CMAKE_METADATA_FILE} DESTINATION python\/dune\/data)/get_filename_component(LINKDUNEPY_CMAKE_METADATA_FILE_DIR ${LINKDUNEPY_CMAKE_METADATA_FILE} DIRECTORY ) \n    install(FILES ${CMAKE_CURRENT_BINARY_DIR}\/${LINKDUNEPY_CMAKE_METADATA_FILE} DESTINATION python\/${LINKDUNEPY_CMAKE_METADATA_FILE_DIR})/g' DunePythonInstallPackage.cmake && \
-  cd / && \
-  cd dune && \
   git clone https://github.com/rath3t/dune-iga.git && \
   cd dune-iga  && \
   git checkout main && \
@@ -174,7 +42,7 @@ RUN mkdir -p dune && \
   cd dune-localfefunctions && \
   git checkout main && \
   cd .. && \
-  ./dune-common/bin/dunecontrol   --cmake-opts="-DPython3_EXECUTABLE=/usr/bin/python -DPython3_INCLUDE_DIRS=/usr/include/python3.10/ -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1 -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_PYTHON_VIRTUALENV_SETUP=TRUE -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -DCXX_MAX_STANDARD=20" cmake && \
+  ./dune-common/bin/dunecontrol   --cmake-opts="-DPython3_EXECUTABLE=/usr/bin/python -DPython3_INCLUDE_DIRS=/usr/include/python3.11/ -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1 -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_PYTHON_VIRTUALENV_SETUP=TRUE -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -DCXX_MAX_STANDARD=20" cmake && \
   ./dune-common/bin/dunecontrol make
 
 RUN  update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 10
