@@ -227,21 +227,6 @@ RUN git clone https://github.com/dmillard/eigengdb && \
 
 ENV CMAKE_PREFIX_PATH /dune/dune-geometry/build-cmake:/dune/dune-matrix-vector/build-cmake:/dune/dune-functions/build-cmake:/dune/dune-common/build-cmake:/dune/dune-localfunctions/build-cmake:/dune/dune-alugrid/build-cmake:/dune/dune-fufem/build-cmake:/dune/dune-typetree/build-cmake:/dune/dune-uggrid/build-cmake:/dune/dune-grid/build-cmake:/dune/dune-foamgrid/build-cmake:/dune/dune-istl/build-cmake:/dune/dune-grid-glue/build-cmake:/dune/dune-iga/build-cmake:/dune/dune-vtk/build-cmake:/dune/dune-localfefunctions/build-cmake:
 
-RUN git clone --branch v3.11.2 --depth 1 https://github.com/nlohmann/json.git && \
-    cd json && \
-    mkdir build && \
-    cd build && \
-    cmake .. -DJSON_BuildTests=0 &&  \
-    make &&  \
-    make install 
-
-RUN git clone --branch master --depth 1 https://github.com/mapbox/earcut.hpp.git  && \
-    cd earcut.hpp && \
-    mkdir build && \
-    cd build && \
-    cmake .. -DEARCUT_BUILD_TESTS=OFF -DEARCUT_BUILD_BENCH=OFF -DEARCUT_BUILD_VIZ=OFF && \
-    cmake --build . --target install
-
 ARG UID=1001
 ARG GID=1001
 
