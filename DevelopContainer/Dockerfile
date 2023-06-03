@@ -152,6 +152,31 @@ RUN mkdir -p dune && \
   dune-common/bin/dunecontrol git checkout releases/2.9 
 
   RUN ls /usr/include/python3.10/
+  
+RUN git clone --branch v3.11.2 --depth 1 https://github.com/nlohmann/json.git && \
+    cd json && \
+    mkdir build && \
+    cd build && \
+    cmake .. -DJSON_BuildTests=0 &&  \
+    make &&  \
+    make install 
+
+RUN git clone --branch master --depth 1 https://github.com/mapbox/earcut.hpp.git  && \
+    cd earcut.hpp && \
+    mkdir build && \
+    cd build && \
+    cmake .. -DEARCUT_BUILD_TESTS=OFF -DEARCUT_BUILD_BENCH=OFF -DEARCUT_BUILD_VIZ=OFF && \
+    cmake --build . --target install  
+    
+RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
+  cd Clipper2/CPP && \
+  git checkout Clipper2_1.0.6 && \
+  mkdir build && \
+  cd build && \
+  cmake .. -DCLIPPER2_TESTS=0 -DBUILD_SHARED_LIBS=ON -DCLIPPER2_EXAMPLES=0 && \
+  cmake --build . --target install --parallel 2 && \
+  cd / && \
+  rm -rf Clipper2
 
   RUN cd dune && \
   cd dune-common/cmake/modules &&\
@@ -178,16 +203,7 @@ RUN mkdir -p dune && \
   ./dune-common/bin/dunecontrol make
 
 RUN  update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 10
-RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
-  cd Clipper2/CPP && \
-  git checkout Clipper2_1.0.6 && \
-  mkdir build && \
-  cd build && \
-  cmake .. -DCLIPPER2_TESTS=0 -DBUILD_SHARED_LIBS=ON -DCLIPPER2_EXAMPLES=0 && \
-  cmake --build . --target install --parallel 2 && \
-  cd / && \
-  rm -rf Clipper2 && \
-  git clone https://github.com/dmillard/eigengdb && \
+RUN git clone https://github.com/dmillard/eigengdb && \
   cd eigengdb && \
   python3.10 setup.py install && \
   python3.10 bin/eigengdb_register_printers && \
