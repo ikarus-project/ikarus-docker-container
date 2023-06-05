@@ -122,6 +122,13 @@ RUN apt-get -y --no-install-recommends install build-essential \
   make install && \
   cd ~ && \
   rm -rf eigen && \
+  git clone https://github.com/yixuan/spectra.git && \
+  cd spectra && \
+  mkdir build && cd build && \
+  cmake .. -DBUILD_TESTS=FALSE && \
+  make all && make install && \
+  cd ~ && \
+  rm -rf spectra && \
   git clone https://github.com/alandefreitas/matplotplusplus.git && \
   cd matplotplusplus && \
   git checkout v1.1.0 && \
