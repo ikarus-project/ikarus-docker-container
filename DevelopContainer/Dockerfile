@@ -172,7 +172,7 @@ RUN git clone --branch master --depth 1 https://github.com/mapbox/earcut.hpp.git
     cd earcut.hpp && \
     mkdir build && \
     cd build && \
-    cmake .. -DEARCUT_BUILD_TESTS=OFF -DEARCUT_BUILD_BENCH=OFF -DEARCUT_BUILD_VIZ=OFF && \
+    cmake .. -DEARCUT_BUILD_TESTS=OFF -DEARCUT_BUILD_BENCH=OFF -DEARCUT_BUILD_VIZ=OFF -DBUILD_SHARED_LIBS=ON && \
     cmake --build . --target install  
     
 RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
