@@ -33,6 +33,7 @@ RUN apt-get -y --no-install-recommends install build-essential \
   g++-12 \
   cmake \
   gdb  \
+  ccache \
   lldb \
   lcov \
   gcovr \
