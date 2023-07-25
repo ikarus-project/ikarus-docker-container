@@ -34,13 +34,11 @@ RUN apt-get -y --no-install-recommends install build-essential \
   cmake \
   gdb  \
   ccache \
-  lldb \
   lcov \
   gcovr \
   nano \
   valgrind \
   mesa-utils \
-  clang \
   libgbm1 \
   libmetis-dev \
   libnss3 \
@@ -50,11 +48,7 @@ RUN apt-get -y --no-install-recommends install build-essential \
   libsecret-1-0 \
   xdg-utils \
   clang-tidy \
-  libclang-14-dev \
   clang-format-13 \
-  libc++-14-dev \
-  libc++abi-14-dev \
-  llvm-14-dev \
   liblapack-dev \
   libopenblas-dev \
   libsuitesparse-dev \
@@ -100,19 +94,6 @@ RUN apt-get -y --no-install-recommends install build-essential \
   rm -rf fmt && \
   cd ~ && \
   cp /usr/bin/clang-format-13 /usr/bin/clang-format && \
-  cd ~ && \
-  mkdir -p iwyu && \
-  cd iwyu && \
-  git clone https://github.com/include-what-you-use/include-what-you-use.git && \
-  cd include-what-you-use && \
-  git checkout clang_14 && \
-  cd .. && \
-  mkdir -p build && cd build && \
-  cmake -G "Unix Makefiles" -DIWYU_LLVM_ROOT_PATH=/usr/lib/llvm-14 ../include-what-you-use && \
-  make && \
-  make install && \
-  cd ~ && \
-  rm -rf iwyu && \
   cd ~ && \
   git clone https://gitlab.com/libeigen/eigen.git && \
   cd eigen && \
@@ -186,6 +167,36 @@ RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
   cd / && \
   rm -rf Clipper2
 
+
+RUN apt update && apt install -y lsb-release wget software-properties-common gnupg ca-certificates
+RUN apt install --reinstall python3-software-properties
+RUN apt-get install --reinstall python3-apt
+RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key| apt-key add -
+RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-16 main"
+RUN wget https://apt.llvm.org/llvm.sh && \
+     chmod +x llvm.sh && \
+     ./llvm.sh 16 all
+
+
+RUN  update-alternatives --install /usr/bin/clang clang /usr/bin/clang-16 10
+RUN  update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 10
+
+
+
+RUN mkdir -p iwyu && \
+  cd iwyu && \
+  git clone https://github.com/include-what-you-use/include-what-you-use.git && \
+  cd include-what-you-use && \
+  git checkout clang_16 && \
+  cd .. && \
+  mkdir -p build && cd build && \
+  cmake -G "Unix Makefiles" -DLLVM_DIR="$(llvm-config --cmakedir)" -DIWYU_LLVM_ROOT_PATH=/usr/lib/llvm-16 -DCMAKE_C_COMPILER=/usr/lib/llvm-16/bin/clang -DCMAKE_CXX_COMPILER=/usr/lib/llvm-16/bin/clang++ -DCMAKE_PREFIX_PATH=/usr/lib/llvm-16 ../include-what-you-use && \
+  make && \
+  make install && \
+  cd ~ && \
+  rm -rf iwyu
+
+
   RUN cd dune && \
   cd dune-common/cmake/modules &&\
   sed -i 's/install(FILES ${CMAKE_CURRENT_BINARY_DIR}\/${LINKDUNEPY_CMAKE_METADATA_FILE} DESTINATION python\/dune\/data)/get_filename_component(LINKDUNEPY_CMAKE_METADATA_FILE_DIR ${LINKDUNEPY_CMAKE_METADATA_FILE} DIRECTORY ) \n    install(FILES ${CMAKE_CURRENT_BINARY_DIR}\/${LINKDUNEPY_CMAKE_METADATA_FILE} DESTINATION python\/${LINKDUNEPY_CMAKE_METADATA_FILE_DIR})/g' DunePythonInstallPackage.cmake && \
@@ -207,8 +218,9 @@ RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
   cd dune-localfefunctions && \
   git checkout main && \
   cd .. && \
-  ./dune-common/bin/dunecontrol   --cmake-opts="-DPython3_EXECUTABLE=/usr/bin/python -DPython3_INCLUDE_DIRS=/usr/include/python3.10/ -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1 -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_PYTHON_VIRTUALENV_SETUP=TRUE -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -DCXX_MAX_STANDARD=20" cmake && \
+  ./dune-common/bin/dunecontrol   --cmake-opts="-DCMAKE_C_COMPILER=/usr/lib/llvm-16/bin/clang -DCMAKE_CXX_COMPILER=/usr/lib/llvm-16/bin/clang++ -DPython3_EXECUTABLE=/usr/bin/python -DPython3_INCLUDE_DIRS=/usr/include/python3.10/ -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1 -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_PYTHON_VIRTUALENV_SETUP=TRUE -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -DCXX_MAX_STANDARD=20 -DCMAKE_EXE_LINKER_FLAGS='-stdlib=libc++ -lc++abi' -DCMAKE_CXX_FLAGS='-stdlib=libc++'" cmake && \
   ./dune-common/bin/dunecontrol make
+
 
 RUN  update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 10
 RUN git clone https://github.com/dmillard/eigengdb && \
@@ -232,6 +244,8 @@ RUN git clone https://github.com/dmillard/eigengdb && \
   rm -rvf /var/cache/apt/archives/* && \
   apt-get -y remove  \
   software-properties-common
+
+
 
 ENV CMAKE_PREFIX_PATH /dune/dune-geometry/build-cmake:/dune/dune-matrix-vector/build-cmake:/dune/dune-functions/build-cmake:/dune/dune-common/build-cmake:/dune/dune-localfunctions/build-cmake:/dune/dune-alugrid/build-cmake:/dune/dune-fufem/build-cmake:/dune/dune-typetree/build-cmake:/dune/dune-uggrid/build-cmake:/dune/dune-grid/build-cmake:/dune/dune-foamgrid/build-cmake:/dune/dune-istl/build-cmake:/dune/dune-grid-glue/build-cmake:/dune/dune-iga/build-cmake:/dune/dune-vtk/build-cmake:/dune/dune-localfefunctions/build-cmake:
 
