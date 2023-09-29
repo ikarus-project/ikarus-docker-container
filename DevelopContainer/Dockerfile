@@ -159,6 +159,7 @@ RUN mkdir -p dune && \
   git clone https://gitlab.dune-project.org/fufem/dune-fufem.git  && \
   git clone https://gitlab.mn.tu-dresden.de/iwr/dune-curvedgeometry.git && \
   git clone https://gitlab.mn.tu-dresden.de/iwr/dune-curvedgrid.git && \
+  git clone https://gitlab.mn.tu-dresden.de/iwr/dune-gmsh4.git && \
   dune-common/bin/dunecontrol git checkout releases/2.9 
 
   RUN ls /usr/include/python3.10/
