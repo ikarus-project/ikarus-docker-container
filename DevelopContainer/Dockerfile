@@ -24,13 +24,11 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   cmake \
   gdb  \
   ccache \
-  lldb \
   lcov \
   gcovr \
   nano \
   valgrind \
   mesa-utils \
-  clang \
   libgbm1 \
   libmetis-dev \
   libnss3 \
@@ -40,11 +38,7 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   libsecret-1-0 \
   xdg-utils \
   clang-tidy \
-  libclang-14-dev \
   clang-format-13 \
-  libc++-14-dev \
-  libc++abi-14-dev \
-  llvm-14-dev \
   liblapack-dev \
   libopenblas-dev \
   libsuitesparse-dev \
@@ -93,19 +87,6 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   cd ~ && \
   cp /usr/bin/clang-format-13 /usr/bin/clang-format && \
   cd ~ && \
-  mkdir -p iwyu && \
-  cd iwyu && \
-  git clone https://github.com/include-what-you-use/include-what-you-use.git && \
-  cd include-what-you-use && \
-  git checkout clang_14 && \
-  cd .. && \
-  mkdir -p build && cd build && \
-  cmake -G "Unix Makefiles" -DIWYU_LLVM_ROOT_PATH=/usr/lib/llvm-14 ../include-what-you-use && \
-  make && \
-  make install && \
-  cd ~ && \
-  rm -rf iwyu && \
-  cd ~ && \
   git clone https://gitlab.com/libeigen/eigen.git && \
   cd eigen && \
   git checkout 3.4 && \
@@ -132,6 +113,35 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   cmake --install . && \
   cd ~ && \
   rm -rf matplotplusplus
+
+RUN apt update && apt install -y lsb-release wget software-properties-common gnupg ca-certificates
+RUN apt install --reinstall python3-software-properties
+RUN apt-get install --reinstall python3-apt
+RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key| apt-key add -
+RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-16 main"
+RUN wget https://apt.llvm.org/llvm.sh && \
+     chmod +x llvm.sh && \
+     ./llvm.sh 16 all
+
+
+RUN  update-alternatives --install /usr/bin/clang clang /usr/bin/clang-16 10
+RUN  update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 10
+
+
+
+RUN mkdir -p iwyu && \
+  cd iwyu && \
+  git clone https://github.com/include-what-you-use/include-what-you-use.git && \
+  cd include-what-you-use && \
+  git checkout clang_16 && \
+  cd .. && \
+  mkdir -p build && cd build && \
+  cmake -G "Unix Makefiles" -DLLVM_DIR="$(llvm-config --cmakedir)" -DIWYU_LLVM_ROOT_PATH=/usr/lib/llvm-16 -DCMAKE_C_COMPILER=/usr/lib/llvm-16/bin/clang -DCMAKE_CXX_COMPILER=/usr/lib/llvm-16/bin/clang++ -DCMAKE_PREFIX_PATH=/usr/lib/llvm-16 ../include-what-you-use && \
+  make && \
+  make install && \
+  cd ~ && \
+  rm -rf iwyu
+
 
 
 RUN mkdir -p dune && \
@@ -192,7 +202,7 @@ RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
   cd dune-vtk && \
   git checkout master && \
   cd .. && \
-  git clone https://github.com/ikarus-project/dune-localfefunctions.git && \
+  git clone https://github.com/ikarus-project/dune-localfefunctions.git  && \
   cd dune-localfefunctions && \
   git checkout main && \
   cd .. && \
@@ -222,6 +232,7 @@ RUN git clone https://github.com/dmillard/eigengdb && \
   software-properties-common
 
 ENV CMAKE_PREFIX_PATH /dune/dune-geometry/build-cmake:/dune/dune-matrix-vector/build-cmake:/dune/dune-functions/build-cmake:/dune/dune-common/build-cmake:/dune/dune-localfunctions/build-cmake:/dune/dune-alugrid/build-cmake:/dune/dune-fufem/build-cmake:/dune/dune-typetree/build-cmake:/dune/dune-uggrid/build-cmake:/dune/dune-grid/build-cmake:/dune/dune-foamgrid/build-cmake:/dune/dune-istl/build-cmake:/dune/dune-grid-glue/build-cmake:/dune/dune-iga/build-cmake:/dune/dune-vtk/build-cmake:/dune/dune-localfefunctions/build-cmake:/dune/dune-curvedgrid/build-cmake:/dune/dune-curvedgeometry/build-cmake:
+
 
 ARG UID=1001
 ARG GID=1001
