@@ -8,21 +8,11 @@ EXPOSE 8000
 ENV DISPLAY=:0
 ENV LD_LIBRARY_PATH=/usr/lib/wsl/lib
 
-RUN apt-get update -q -y  && apt-get -y --no-install-recommends install wget build-essential libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev
-
-RUN   wget --no-check-certificate -cq https://www.python.org/ftp/python/3.10.9/Python-3.10.9.tar.xz && \
-  tar -Jxf Python-3.10.9.tar.xz &&\
-  cd Python-3.10.9 &&\
-  ./configure --enable-optimizations --prefix=/usr --enable-shared &&\
-  make install && \
-  cd .. && \
-  rm -rf Python-3.10.9 && \
-  rm Python-3.10.9.tar.xz
-
-
-RUN  update-alternatives --install /usr/bin/python python /usr/bin/python3.10 10
-
-RUN apt-get -y --no-install-recommends install build-essential \
+RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-essential \
+  python3 \
+  python3-pip \
+  python3-dev \
+  python3-venv \
   libssl-dev \
   git \
   wget \
@@ -63,8 +53,10 @@ RUN apt-get -y --no-install-recommends install build-essential \
   libopenmpi-dev \
   gnuplot 
 
-  RUN  python -m pip install --upgrade pip && \
-  python -m pip install --no-cache-dir virtualenv \
+  RUN  update-alternatives --install /usr/bin/python python /usr/bin/python3.11 11
+
+  RUN  python -m pip install --upgrade pip --break-system-packages && \
+  python -m pip install --no-cache-dir --break-system-packages \
   cmakelang==0.6.13 \
   pyyaml \
   mkdocs \
@@ -160,9 +152,7 @@ RUN mkdir -p dune && \
   git clone https://gitlab.mn.tu-dresden.de/iwr/dune-curvedgeometry.git && \
   git clone https://gitlab.mn.tu-dresden.de/iwr/dune-curvedgrid.git && \
   git clone https://gitlab.mn.tu-dresden.de/iwr/dune-gmsh4.git && \
-  dune-common/bin/dunecontrol git checkout releases/2.9 
-
-  RUN ls /usr/include/python3.10/
+  dune-common/bin/dunecontrol git checkout master
   
 RUN git clone --branch v3.11.2 --depth 1 https://github.com/nlohmann/json.git && \
     cd json && \
@@ -190,11 +180,7 @@ RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
   rm -rf Clipper2
 
   RUN cd dune && \
-  cd dune-common/cmake/modules &&\
-  sed -i 's/install(FILES ${CMAKE_CURRENT_BINARY_DIR}\/${LINKDUNEPY_CMAKE_METADATA_FILE} DESTINATION python\/dune\/data)/get_filename_component(LINKDUNEPY_CMAKE_METADATA_FILE_DIR ${LINKDUNEPY_CMAKE_METADATA_FILE} DIRECTORY ) \n    install(FILES ${CMAKE_CURRENT_BINARY_DIR}\/${LINKDUNEPY_CMAKE_METADATA_FILE} DESTINATION python\/${LINKDUNEPY_CMAKE_METADATA_FILE_DIR})/g' DunePythonInstallPackage.cmake && \
-  cd / && \
-  cd dune && \
-  git clone https://github.com/rath3t/dune-iga.git && \
+  git clone https://github.com/rath3t/dune-iga.git  && \
   cd dune-iga  && \
   git checkout main && \
   cd / && \
@@ -204,20 +190,19 @@ RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
   cd .. && \
   git clone https://gitlab.dune-project.org/extensions/dune-vtk.git && \
   cd dune-vtk && \
-  git checkout releases/2.9 && \
+  git checkout master && \
   cd .. && \
   git clone https://github.com/ikarus-project/dune-localfefunctions.git && \
   cd dune-localfefunctions && \
   git checkout main && \
   cd .. && \
-  ./dune-common/bin/dunecontrol   --cmake-opts="-DPython3_EXECUTABLE=/usr/bin/python -DPython3_INCLUDE_DIRS=/usr/include/python3.10/ -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1 -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_PYTHON_VIRTUALENV_SETUP=TRUE -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -DCXX_MAX_STANDARD=20" cmake && \
+  ./dune-common/bin/dunecontrol   --cmake-opts="-DPython3_EXECUTABLE=/usr/bin/python -DPython3_INCLUDE_DIRS=/usr/include/python3.11/ -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1 -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=20" cmake && \
   ./dune-common/bin/dunecontrol make
 
-RUN  update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 10
 RUN git clone https://github.com/dmillard/eigengdb && \
   cd eigengdb && \
-  python3.10 setup.py install && \
-  python3.10 bin/eigengdb_register_printers && \
+  python3.11 setup.py install && \
+  python3.11 bin/eigengdb_register_printers && \
   gdb -q -iex "add-auto-load-safe-path /tmp/Ikarus/.gdbinit" && \
   git clone https://github.com/autodiff/autodiff && \
   cd autodiff/ && \
