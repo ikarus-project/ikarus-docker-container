@@ -215,7 +215,6 @@ RUN git clone https://github.com/dmillard/eigengdb && \
   git checkout main && \
   cd / && \
   cd dune && \
-  cd .. && \
   git clone  https://github.com/ikarus-project/dune-localfefunctions.git  && \
   cd dune-localfefunctions && \
   git checkout main && \
