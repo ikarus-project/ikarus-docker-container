@@ -141,28 +141,6 @@ RUN mkdir -p iwyu && \
   make install && \
   cd ~ && \
   rm -rf iwyu
-
-
-
-RUN mkdir -p dune && \
-  cd dune && \
-  git clone https://gitlab.dune-project.org/core/dune-common.git && \
-  git clone https://gitlab.dune-project.org/core/dune-geometry.git && \
-  git clone https://gitlab.dune-project.org/core/dune-istl.git && \
-  git clone https://gitlab.dune-project.org/core/dune-grid.git && \
-  git clone https://gitlab.dune-project.org/staging/dune-uggrid.git && \
-  git clone https://gitlab.dune-project.org/staging/dune-functions.git && \
-  git clone https://gitlab.dune-project.org/staging/dune-typetree.git && \
-  git clone https://gitlab.dune-project.org/core/dune-localfunctions.git && \
-  git clone https://gitlab.dune-project.org/extensions/dune-alugrid.git && \
-  git clone https://gitlab.dune-project.org/extensions/dune-foamgrid.git && \
-  git clone https://gitlab.dune-project.org/fufem/dune-matrix-vector.git && \
-  git clone https://gitlab.dune-project.org/extensions/dune-grid-glue.git && \
-  git clone https://gitlab.dune-project.org/fufem/dune-fufem.git  && \
-  git clone https://gitlab.mn.tu-dresden.de/iwr/dune-curvedgeometry.git && \
-  git clone https://gitlab.mn.tu-dresden.de/iwr/dune-curvedgrid.git && \
-  git clone https://gitlab.mn.tu-dresden.de/iwr/dune-gmsh4.git && \
-  dune-common/bin/dunecontrol git checkout master
   
 RUN git clone --branch v3.11.2 --depth 1 https://github.com/nlohmann/json.git && \
     cd json && \
@@ -189,26 +167,6 @@ RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
   cd / && \
   rm -rf Clipper2
 
-  RUN cd dune && \
-  git clone https://github.com/rath3t/dune-iga.git  && \
-  cd dune-iga  && \
-  git checkout main && \
-  cd / && \
-  cd dune && \
-  cd dune-foamgrid &&\
-  git checkout master && \
-  cd .. && \
-  git clone https://gitlab.dune-project.org/extensions/dune-vtk.git && \
-  cd dune-vtk && \
-  git checkout master && \
-  cd .. && \
-  git clone https://github.com/ikarus-project/dune-localfefunctions.git  && \
-  cd dune-localfefunctions && \
-  git checkout main && \
-  cd .. && \
-  ./dune-common/bin/dunecontrol   --cmake-opts="-DPython3_EXECUTABLE=/usr/bin/python -DPython3_INCLUDE_DIRS=/usr/include/python3.11/ -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1 -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=20" cmake && \
-  ./dune-common/bin/dunecontrol make
-
 RUN git clone https://github.com/dmillard/eigengdb && \
   cd eigengdb && \
   python3.11 setup.py install && \
@@ -219,12 +177,53 @@ RUN git clone https://github.com/dmillard/eigengdb && \
   mkdir .build && \
   cd .build/ && \
   cmake .. -DAUTODIFF_BUILD_PYTHON=1 -DAUTODIFF_BUILD_EXAMPLES=0 -DAUTODIFF_BUILD_DOCS=0 -DAUTODIFF_BUILD_TESTS=0 -DAUTODIFF_PYTHON_INSTALL_PREFIX="" && \
-  cmake --build . --target install --parallel 2 &&\
+  cmake --build . --target install --parallel 2 
+
+  RUN mkdir -p dune && \
+  cd dune && \
+  git clone https://gitlab.dune-project.org/core/dune-common.git && \
+  git clone https://gitlab.dune-project.org/core/dune-geometry.git && \
+  git clone https://gitlab.dune-project.org/core/dune-istl.git && \
+  git clone https://gitlab.dune-project.org/core/dune-grid.git && \
+  git clone https://gitlab.dune-project.org/staging/dune-uggrid.git && \
+  git clone https://gitlab.dune-project.org/staging/dune-functions.git && \
+  git clone https://gitlab.dune-project.org/staging/dune-typetree.git && \
+  git clone https://gitlab.dune-project.org/core/dune-localfunctions.git && \
+  git clone https://gitlab.dune-project.org/extensions/dune-alugrid.git && \
+  git clone https://gitlab.dune-project.org/extensions/dune-foamgrid.git && \
+  git clone https://gitlab.dune-project.org/fufem/dune-matrix-vector.git && \
+  git clone https://gitlab.dune-project.org/extensions/dune-grid-glue.git && \
+  git clone https://gitlab.dune-project.org/fufem/dune-fufem.git  && \
+  git clone https://gitlab.mn.tu-dresden.de/iwr/dune-curvedgeometry.git && \
+  git clone https://gitlab.mn.tu-dresden.de/iwr/dune-curvedgrid.git && \
+  git clone https://gitlab.mn.tu-dresden.de/iwr/dune-gmsh4.git && \
+  git clone https://gitlab.dune-project.org/extensions/dune-vtk.git && \
+  dune-common/bin/dunecontrol git checkout master && \
+  dune-common/bin/dunecontrol   --cmake-opts="-DCMAKE_CXX_FLAGS='-O3' -DPython3_EXECUTABLE=/usr/bin/python -DPython3_INCLUDE_DIRS=/usr/include/python3.11/ -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1 -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=20" cmake && \
+  dune-common/bin/dunecontrol make
+
+  RUN  cd autodiff/ && \
+  cd .build/ && \
   cd python/package && \
   /dune/dune-common/build-cmake/run-in-dune-env python -m pip install . --no-deps --force-reinstall --no-compile && \
   cd / && \
-  rm -rf autodiff && \
-  apt-get auto-remove -y && \
+  rm -rf autodiff 
+
+    RUN cd dune && \
+  git clone https://github.com/rath3t/dune-iga.git  && \
+  cd dune-iga  && \
+  git checkout main && \
+  cd / && \
+  cd dune && \
+  cd .. && \
+  git clone https://github.com/ikarus-project/dune-localfefunctions.git  && \
+  cd dune-localfefunctions && \
+  git checkout main && \
+  cd .. && \
+  ./dune-common/bin/dunecontrol   --cmake-opts="-DCMAKE_CXX_FLAGS='-O3' -DPython3_EXECUTABLE=/usr/bin/python -DPython3_INCLUDE_DIRS=/usr/include/python3.11/ -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1 -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=20" cmake && \
+  ./dune-common/bin/dunecontrol make
+
+  RUN apt-get auto-remove -y && \
   apt-get clean && \
   rm -rvf /var/lib/apt/lists/* && \
   rm -rvf /var/cache/apt/archives/* && \
