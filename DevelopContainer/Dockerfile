@@ -202,7 +202,7 @@ RUN git clone https://github.com/dmillard/eigengdb && \
   dune-common/bin/dunecontrol   --cmake-opts="-DCMAKE_CXX_FLAGS='-O3' -DPython3_EXECUTABLE=/usr/bin/python -DPython3_INCLUDE_DIRS=/usr/include/python3.11/ -DDUNE_LOCALFEFUNCTIONS_USE_EIGEN=1 -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=20" cmake && \
   dune-common/bin/dunecontrol make
 
-  RUN  cd autodiff/ && \
+  RUN ls && cd eigengdb/autodiff && \
   cd .build/ && \
   cd python/package && \
   /dune/dune-common/build-cmake/run-in-dune-env python -m pip install . --no-deps --force-reinstall --no-compile && \
@@ -216,7 +216,7 @@ RUN git clone https://github.com/dmillard/eigengdb && \
   cd / && \
   cd dune && \
   cd .. && \
-  git clone https://github.com/ikarus-project/dune-localfefunctions.git  && \
+  git clone  https://github.com/ikarus-project/dune-localfefunctions.git  && \
   cd dune-localfefunctions && \
   git checkout main && \
   cd .. && \
