@@ -1,9 +1,11 @@
  name: Build Development Docker Images
 
  on:
-   push:
-     branches:
-       - 'main'
+   workflow_run:
+     workflows: ["Build Development Debian Images"]
+     branches: [main]
+     types:
+       - completed
    workflow_dispatch:
 
  jobs:
