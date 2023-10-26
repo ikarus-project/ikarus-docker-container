@@ -1,5 +1,5 @@
 FROM ikarusproject/debian12:latest
-
+#docker build --squash -t ikarusproject/ikarus-dev:latest . &> build.log
 MAINTAINER mueller@ibb.uni-stuttgart.de
 
 RUN cd dune && \
@@ -8,7 +8,7 @@ RUN cd dune && \
   git checkout main && \
   cd / && \
   cd dune && \
-  git clone  https://github.com/ikarus-project/dune-localfefunctions.git  && \
+  git clone  https://github.com/ikarus-project/dune-localfefunctions.git && \
   cd dune-localfefunctions && \
   git checkout main && \
   cd .. && \
