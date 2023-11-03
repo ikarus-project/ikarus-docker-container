@@ -1,4 +1,4 @@
- name: Build Development Docker Images
+ name: Build Development Ikarus Docker Images
 
  on:
    workflow_run:

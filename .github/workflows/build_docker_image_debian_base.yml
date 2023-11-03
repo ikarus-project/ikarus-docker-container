@@ -1,4 +1,4 @@
- name: Build Development Debian Images
+ name: Build Development Debian and DUNE base Images
 
  on:
    push:
