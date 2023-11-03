@@ -45,6 +45,7 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   libsuperlu-dev \
   libquadmath0 \
   libopenmpi-dev \
+  doxygen \
   gnuplot 
 
   RUN  update-alternatives --install /usr/bin/python python /usr/bin/python3.11 11
