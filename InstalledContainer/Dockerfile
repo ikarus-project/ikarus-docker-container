@@ -1,11 +1,16 @@
-FROM ikarusproject/ikarus-dev:latest
+ARG COMPILER="gcc"
 
-
-USER root
-
-
+FROM ikarusproject/ikarus-dev-${COMPILER}:latest
 ARG branch "main"
 ENV BRANCH=${branch}
+USER root
+ARG ccompiler "gcc-12"
+ENV C_COMPILER=${ccompiler}
+
+ARG cppcompiler "g++-12"
+ENV CPP_COMPILER=${cppcompiler}
+#docker build --squash -t ikarusproject/ikarus-gcc:latest --build-arg compiler="gcc" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"  . &> build.log
+#docker build --squash -t ikarusproject/ikarus-clang:latest --build-arg compiler="clang" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"  . &> build.log
 
 
 ENV DEBIAN_FRONTEND "noninteractive"
@@ -23,7 +28,7 @@ RUN git clone https://github.com/ikarus-project/Ikarus.git && \
     git checkout ${BRANCH} && \
     mkdir build && \
     cd build && \
-    cmake .. -DCMAKE_BUILD_TYPE=Release -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_PYTHON_VIRTUALENV_SETUP=TRUE -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE && \
+    cmake .. -DCMAKE_BUILD_TYPE=Release -GNinja -DCMAKE_C_COMPILER=${C_COMPILER} -DCMAKE_CXX_COMPILER=${CPP_COMPILER} -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_PYTHON_VIRTUALENV_SETUP=TRUE -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE && \
     cmake --build . --target ikarus && \
     cmake --install . 
 

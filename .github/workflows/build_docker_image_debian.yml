@@ -17,25 +17,36 @@
        - name: Build the Development Docker image
          working-directory: ./DevelopContainer
          run: |
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev:latest
+           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev-gcc:latest --build-arg compiler="gcc" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
+           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev-clang:latest --build-arg compiler="clang" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"  . &> build.log
+           docker tag ikarusproject/ikarus-dev-gcc:latest ikarusproject/ikarus-dev:latest # set the latest tag to the gcc image
        - name: Docker Login
          uses: azure/docker-login@v1
          with:
            username: ${{ secrets.DOCKER_USERNAME }}
            password: ${{ secrets.DOCKER_PASSWORD }}
        - name: Publish the Docker image
-         run: docker push ikarusproject/ikarus-dev:latest
+         run: |
+           docker push ikarusproject/ikarus-dev-gcc:latest
+           docker push ikarusproject/ikarus-dev-clang:latest
+           docker push ikarusproject/ikarus-dev:latest
          
        - name: Build the Installed Docker image
          working-directory: ./InstalledContainer
-         run: docker build . --file Dockerfile --tag ikarusproject/ikarus:latest
+         run: |
+           docker build . --file Dockerfile --tag ikarusproject/ikarus-gcc:latest --build-arg compiler="gcc" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
+           docker build . --file Dockerfile --tag ikarusproject/ikarus-clang:latest --build-arg compiler="clang" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
+           docker tag ikarusproject/ikarus-gcc:latest ikarusproject/ikarus:latest # set the latest tag to the gcc image
        - name: Docker Login
          uses: azure/docker-login@v1
          with:
            username: ${{ secrets.DOCKER_USERNAME }}
            password: ${{ secrets.DOCKER_PASSWORD }}
        - name: Publish the Docker image
-         run: docker push ikarusproject/ikarus:latest       
+         run: |
+           docker push ikarusproject/ikarus-gcc:latest     
+           docker push ikarusproject/ikarus-clang:latest         
+           docker push ikarusproject/ikarus:latest        
 
     #    - name: Build the GrassHopperServer images
     #      working-directory: ./GrassHopperServer

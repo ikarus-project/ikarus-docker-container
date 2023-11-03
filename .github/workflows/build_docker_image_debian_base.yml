@@ -23,4 +23,21 @@
            password: ${{ secrets.DOCKER_PASSWORD }}
        - name: Publish the Docker image
          run: docker push ikarusproject/debian12:latest
+
+       - name: Build the dunebase Docker image
+         working-directory: ./DuneBase
+         run: |
+           docker build . --file Dockerfile --tag ikarusproject/dunebase-gcc:latest --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
+           docker build . --file Dockerfile --tag ikarusproject/dunebase-clang:latest --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
+
+       - name: Docker Login
+         uses: azure/docker-login@v1
+         with:
+           username: ${{ secrets.DOCKER_USERNAME }}
+           password: ${{ secrets.DOCKER_PASSWORD }}
+       - name: Publish the Docker image
+         run: |
+           docker push ikarusproject/debian12:latest   
+           docker push ikarusproject/dunebase-gcc:latest 
+           docker push ikarusproject/dunebase-clang:latest  
              
