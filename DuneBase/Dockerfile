@@ -21,6 +21,7 @@ RUN mkdir -p dune && \
   git clone https://gitlab.dune-project.org/core/dune-geometry.git && \
   git clone https://gitlab.dune-project.org/core/dune-istl.git && \
   git clone https://gitlab.dune-project.org/core/dune-grid.git && \
+  git clone https://gitlab.dune-project.org/extensions/dune-subgrid.git && \
   git clone https://gitlab.dune-project.org/staging/dune-uggrid.git && \
   git clone https://gitlab.dune-project.org/staging/dune-functions.git && \
   git clone https://gitlab.dune-project.org/staging/dune-typetree.git && \
