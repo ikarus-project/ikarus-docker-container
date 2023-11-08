@@ -90,7 +90,7 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   cd ~ && \
   git clone https://gitlab.com/libeigen/eigen.git && \
   cd eigen && \
-  git checkout 3.4 && \
+  git checkout master && \
   mkdir build && \
   cd build && \
   cmake ../ && \
