@@ -2,7 +2,7 @@
 
  on:
    workflow_run:
-     workflows: ["Build Development Debian Images"]
+     workflows: ["Build Development Debian and DUNE base Images"]
      branches: [main]
      types:
        - completed
