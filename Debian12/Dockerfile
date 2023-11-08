@@ -81,7 +81,7 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   git checkout v1.10.0 && \
   mkdir build && \
   cd build && \
-  cmake .. -DSPDLOG_FMT_EXTERNAL=FALSE && \
+  cmake .. -DSPDLOG_FMT_EXTERNAL=FALSE -DSPDLOG_BUILD_SHARED=1 -DSPDLOG_BUILD_PIC=1 && \
   make install && \
   cd ~ && \
   rm -rf fmt && \
