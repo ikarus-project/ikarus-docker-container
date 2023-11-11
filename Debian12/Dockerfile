@@ -46,6 +46,7 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   libquadmath0 \
   libopenmpi-dev \
   doxygen \
+  graphviz \ 
   gnuplot 
 
   RUN  update-alternatives --install /usr/bin/python python /usr/bin/python3.11 11
