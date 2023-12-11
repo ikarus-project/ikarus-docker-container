@@ -164,7 +164,7 @@ RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
   git checkout Clipper2_1.0.6 && \
   mkdir build && \
   cd build && \
-  cmake .. -DCLIPPER2_TESTS=0 -DBUILD_SHARED_LIBS=ON -DCLIPPER2_EXAMPLES=0 && \
+  cmake .. -DCLIPPER2_TESTS=0 -DBUILD_SHARED_LIBS=ON -DCLIPPER2_EXAMPLES=0 -DCLIPPER2_USINGZ=ON && \
   cmake --build . --target install --parallel 2 && \
   cd / && \
   rm -rf Clipper2
