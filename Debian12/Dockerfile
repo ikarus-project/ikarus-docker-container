@@ -161,7 +161,7 @@ RUN git clone --branch master --depth 1 https://github.com/mapbox/earcut.hpp.git
 
 RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
   cd Clipper2/CPP && \
-  git checkout Clipper2_1.0.6 && \
+  git checkout Clipper2_1.3.0 && \
   mkdir build && \
   cd build && \
   cmake .. -DCLIPPER2_TESTS=0 -DBUILD_SHARED_LIBS=ON -DCLIPPER2_EXAMPLES=0 -DCLIPPER2_USINGZ=ON && \
@@ -173,11 +173,13 @@ RUN git clone https://github.com/dmillard/eigengdb && \
   cd eigengdb && \
   python3.11 setup.py install && \
   python3.11 bin/eigengdb_register_printers && \
-  gdb -q -iex "add-auto-load-safe-path /tmp/Ikarus/.gdbinit" && \
-  git clone https://github.com/autodiff/autodiff && \
+  gdb -q -iex "add-auto-load-safe-path /tmp/Ikarus/.gdbinit"
+
+RUN  git clone https://github.com/autodiff/autodiff && \
   cd autodiff/ && \
+  git checkout v1.0.3 && \
   mkdir .build && \
   cd .build/ && \
-  cmake .. -DAUTODIFF_BUILD_PYTHON=1 -DAUTODIFF_BUILD_EXAMPLES=0 -DAUTODIFF_BUILD_DOCS=0 -DAUTODIFF_BUILD_TESTS=0 -DAUTODIFF_PYTHON_INSTALL_PREFIX="" && \
+  cmake .. -DAUTODIFF_BUILD_PYTHON=1 -DAUTODIFF_BUILD_EXAMPLES=0 -DAUTODIFF_BUILD_DOCS=0 -DAUTODIFF_BUILD_TESTS=0 -DCMAKE_CCACHE_IGNORE=1 && \
   cmake --build . --target install --parallel 2 
 
