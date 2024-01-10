@@ -69,8 +69,9 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   scipy \
   mpi4py \
   twine \
-  matplotlib
-
+  matplotlib \
+  clang-format
+  
   RUN apt-get -y --no-install-recommends install \
   gnuplot-x11 \
   curl \
