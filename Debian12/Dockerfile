@@ -47,7 +47,8 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   libopenmpi-dev \
   doxygen \
   graphviz \ 
-  gnuplot 
+  gnuplot \
+  libtbb-dev
 
   RUN  update-alternatives --install /usr/bin/python python /usr/bin/python3.11 11
 
