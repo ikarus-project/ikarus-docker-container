@@ -1,6 +1,6 @@
 
 ARG COMPILER="gcc"
-
+USER root
 FROM ikarusproject/dunebase-${COMPILER}:latest
 
 ARG ccompiler "gcc-12"
