@@ -66,7 +66,7 @@ RUN groupadd -r --gid $GID user \
  && echo "user ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/user \
  && chmod 0440 /etc/sudoers.d/user
 
-RUN chown -R UID:UID:GID /dune 
+RUN chown -R $UID:$GID /dune 
 
 # use python venv on start up
 USER user
