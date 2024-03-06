@@ -55,6 +55,8 @@ RUN mkdir -p dune && \
 
 ENV CMAKE_PREFIX_PATH /dune/dune-geometry/build-cmake:/dune/dune-matrix-vector/build-cmake:/dune/dune-functions/build-cmake:/dune/dune-common/build-cmake:/dune/dune-localfunctions/build-cmake:/dune/dune-alugrid/build-cmake:/dune/dune-fufem/build-cmake:/dune/dune-typetree/build-cmake:/dune/dune-uggrid/build-cmake:/dune/dune-grid/build-cmake:/dune/dune-foamgrid/build-cmake:/dune/dune-istl/build-cmake:/dune/dune-grid-glue/build-cmake:/dune/dune-iga/build-cmake:/dune/dune-vtk/build-cmake:/dune/dune-localfefunctions/build-cmake:/dune/dune-curvedgrid/build-cmake:/dune/dune-curvedgeometry/build-cmake:/dune/dune-subgrid/build-cmake:
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 ARG UID=1001
 ARG GID=1001
@@ -74,10 +76,5 @@ ENV VIRTUAL_ENV=/dune/dune-common/build-cmake/dune-env/
 
 RUN python3 -m venv  $VIRTUAL_ENV
 ENV PATH="VIRTUALENV/bin:VIRTUAL_ENV/bin:PATH"
-
-COPY entrypoint.sh /entrypoint.sh
-USER root
-RUN chmod +x /entrypoint.sh
-USER user
 
 ENTRYPOINT ["/entrypoint.sh"]
