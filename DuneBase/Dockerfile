@@ -29,7 +29,7 @@ RUN mkdir -p dune && \
   git clone https://gitlab.dune-project.org/extensions/dune-alugrid.git && \
   git clone https://gitlab.dune-project.org/extensions/dune-foamgrid.git && \
   git clone https://gitlab.dune-project.org/fufem/dune-matrix-vector.git && \
-  git clone https://gitlab.dune-project.org/extensions/dune-grid-glue.git && \
+  #git clone https://gitlab.dune-project.org/extensions/dune-grid-glue.git && \
   git clone https://gitlab.dune-project.org/fufem/dune-fufem.git  && \
   git clone https://gitlab.mn.tu-dresden.de/iwr/dune-curvedgeometry.git && \
   git clone https://gitlab.mn.tu-dresden.de/iwr/dune-curvedgrid.git && \
@@ -66,14 +66,14 @@ RUN groupadd -r --gid $GID user \
  && echo "user ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/user \
  && chmod 0440 /etc/sudoers.d/user
 
-RUN chown -R $UID:$GID /dune 
+RUN chown -R UID:UID:GID /dune 
 
 # use python venv on start up
 USER user
 ENV VIRTUAL_ENV=/dune/dune-common/build-cmake/dune-env/
 
 RUN python3 -m venv  $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+ENV PATH="VIRTUALENV/bin:VIRTUAL_ENV/bin:PATH"
 
 COPY entrypoint.sh /entrypoint.sh
 USER root
