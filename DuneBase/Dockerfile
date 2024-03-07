@@ -29,7 +29,7 @@ RUN mkdir -p dune && \
   git clone https://gitlab.dune-project.org/extensions/dune-alugrid.git && \
   git clone https://gitlab.dune-project.org/extensions/dune-foamgrid.git && \
   git clone https://gitlab.dune-project.org/fufem/dune-matrix-vector.git && \
-  #git clone https://gitlab.dune-project.org/extensions/dune-grid-glue.git && \
+  git clone https://gitlab.dune-project.org/extensions/dune-grid-glue.git && \
   git clone https://gitlab.dune-project.org/fufem/dune-fufem.git  && \
   git clone https://gitlab.mn.tu-dresden.de/iwr/dune-curvedgeometry.git && \
   git clone https://gitlab.mn.tu-dresden.de/iwr/dune-curvedgrid.git && \
@@ -41,11 +41,9 @@ RUN mkdir -p dune && \
 
 ENV CMAKE_PREFIX_PATH /dune/dune-geometry/build-cmake:/dune/dune-matrix-vector/build-cmake:/dune/dune-functions/build-cmake:/dune/dune-common/build-cmake:/dune/dune-localfunctions/build-cmake:/dune/dune-alugrid/build-cmake:/dune/dune-fufem/build-cmake:/dune/dune-typetree/build-cmake:/dune/dune-uggrid/build-cmake:/dune/dune-grid/build-cmake:/dune/dune-foamgrid/build-cmake:/dune/dune-istl/build-cmake:/dune/dune-grid-glue/build-cmake:/dune/dune-iga/build-cmake:/dune/dune-vtk/build-cmake:/dune/dune-localfefunctions/build-cmake:/dune/dune-curvedgrid/build-cmake:/dune/dune-curvedgeometry/build-cmake:/dune/dune-subgrid/build-cmake:
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
 ARG UID=1001
 ARG GID=1001
+
 
 RUN groupadd -r --gid $GID user \
  && useradd --no-log-init --create-home -g user -r --uid $UID user \
@@ -54,27 +52,15 @@ RUN groupadd -r --gid $GID user \
  && echo "user ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/user \
  && chmod 0440 /etc/sudoers.d/user
 
-RUN chown -R $UID:$GID /dune 
-
-# use python venv on start up
-USER $UID
-ENV VIRTUAL_ENV=/dune/dune-common/build-cmake/dune-env/
-
-RUN python3 -m venv  $VIRTUAL_ENV
-ENV PATH="VIRTUALENV/bin:VIRTUAL_ENV/bin:PATH"
-
-USER root
-COPY entrypoint.sh /entrypoint.sh
-USER $UID
-RUN chmod +x /entrypoint.sh
-
+RUN chown  -R $UID:$GID /dune 
+ 
 RUN cd autodiff && \
-cd .build/ && \
+cd .build/  && \
 cd python/package && \
 /dune/dune-common/build-cmake/run-in-dune-env python -m pip install . --no-deps --force-reinstall --no-compile && \
 cd / && \
 rm -rf autodiff 
-
+ 
 RUN apt-get auto-remove -y && \
 apt-get clean && \
 rm -rvf /var/lib/apt/lists/* && \
@@ -82,6 +68,14 @@ rm -rvf /var/cache/apt/archives/* && \
 apt-get -y remove  \
 software-properties-common
 
-USER user
+# use python venv on start up
 
+ENV VIRTUAL_ENV=/dune/dune-common/build-cmake/dune-env/
+
+#RUN python3 -m venv  $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+RUN echo $PATH
+COPY ./entrypoint.sh /
+RUN chmod +x /entrypoint.sh
+USER $UID
 ENTRYPOINT ["/entrypoint.sh"]
