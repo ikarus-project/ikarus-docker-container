@@ -57,14 +57,15 @@ RUN groupadd -r --gid $GID user \
 RUN chown -R $UID:$GID /dune 
 
 # use python venv on start up
-USER user
+USER $UID
 ENV VIRTUAL_ENV=/dune/dune-common/build-cmake/dune-env/
 
 RUN python3 -m venv  $VIRTUAL_ENV
 ENV PATH="VIRTUALENV/bin:VIRTUAL_ENV/bin:PATH"
 
-COPY entrypoint.sh /entrypoint.sh
 USER root
+COPY entrypoint.sh /entrypoint.sh
+USER $UID
 RUN chmod +x /entrypoint.sh
 
 RUN cd autodiff && \
