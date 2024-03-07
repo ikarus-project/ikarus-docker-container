@@ -1,8 +1,8 @@
 
 ARG COMPILER="gcc"
-USER root
-FROM ikarusproject/dunebase-${COMPILER}:latest
 
+FROM ikarusproject/dunebase-${COMPILER}:latest
+USER root
 ARG ccompiler "gcc-12"
 ENV C_COMPILER=${ccompiler}
 
