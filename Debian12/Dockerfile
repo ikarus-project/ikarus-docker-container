@@ -163,7 +163,7 @@ RUN git clone --branch master --depth 1 https://github.com/mapbox/earcut.hpp.git
 
 RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
   cd Clipper2/CPP && \
-  git checkout Clipper2_1.3.0 && \
+  git checkout main && \
   mkdir build && \
   cd build && \
   cmake .. -DCLIPPER2_TESTS=0 -DBUILD_SHARED_LIBS=ON -DCLIPPER2_EXAMPLES=0 -DCLIPPER2_USINGZ=ON && \
