@@ -127,6 +127,15 @@ RUN wget https://apt.llvm.org/llvm.sh && \
      chmod +x llvm.sh && \
      ./llvm.sh 16 all
 
+RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-17 main"
+RUN wget https://apt.llvm.org/llvm.sh && \
+     chmod +x llvm.sh && \
+     ./llvm.sh 17 all
+
+RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-18 main"
+RUN wget https://apt.llvm.org/llvm.sh && \
+     chmod +x llvm.sh && \
+     ./llvm.sh 18 all
 
 RUN  update-alternatives --install /usr/bin/clang clang /usr/bin/clang-16 10
 RUN  update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 10
