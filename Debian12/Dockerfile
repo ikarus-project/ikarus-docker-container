@@ -155,7 +155,7 @@ RUN mkdir -p iwyu && \
   cd ~ && \
   rm -rf iwyu
 
-RUN git clone --branch v3.11.2 --depth 1 https://github.com/nlohmann/json.git && \
+RUN git clone --branch v3.11.3 --depth 1 https://github.com/nlohmann/json.git && \
     cd json && \
     mkdir build && \
     cd build && \
