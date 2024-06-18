@@ -66,7 +66,7 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   cairosvg \
   "pybind11[global]" \
   scikit-build \
-  numpy \
+  numpy==1.26.4 \
   scipy \
   mpi4py \
   twine \
