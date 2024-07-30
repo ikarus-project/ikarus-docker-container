@@ -71,7 +71,8 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   mpi4py \
   twine \
   matplotlib \
-  clang-format
+  clang-format==18.1.8 \
+  black==24.4.2
   
   RUN apt-get -y --no-install-recommends install \
   gnuplot-x11 \
