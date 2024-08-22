@@ -15,6 +15,8 @@ ENV C_COMPILER=${ccompiler}
 ARG cppcompiler "g++-12"
 ENV CPP_COMPILER=${cppcompiler}
 
+ENV DUNE_CMAKE_FLAGS=-DCMAKE_C_COMPILER=${ccompiler} -DCMAKE_CXX_COMPILER=${cppcompiler}
+
 RUN mkdir -p dune && \
   cd dune && \
   git clone https://gitlab.dune-project.org/core/dune-common.git && \

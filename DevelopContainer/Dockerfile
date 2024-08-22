@@ -1,5 +1,5 @@
 
-ARG COMPILER="gcc"
+ARG compiler "gcc"
 
 FROM ikarusproject/dunebase-${COMPILER}:latest
 ARG ccompiler "gcc-12"

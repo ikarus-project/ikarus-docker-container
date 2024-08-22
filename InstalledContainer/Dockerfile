@@ -1,4 +1,4 @@
-ARG COMPILER="gcc"
+ARG compiler "gcc"
 
 FROM ikarusproject/ikarus-dev-${COMPILER}:latest
 ARG branch "main"
