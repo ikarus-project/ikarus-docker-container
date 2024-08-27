@@ -22,5 +22,5 @@ RUN cd dune && \
   cd dune-localfefunctions && \
   git checkout main && \
   cd .. && \
-  ./dune-common/bin/dunecontrol --only=dune-iga,dune-localfefunctions --cmake-opts="$DUNE_CMAKE_FLAGS" cmake && \
+  ./dune-common/bin/dunecontrol --only=dune-iga,dune-localfefunctions --cmake-opts="$DUNE_MODULE_CMAKE_FLAGS" cmake && \
   ./dune-common/bin/dunecontrol --only=dune-iga,dune-localfefunctions make 
