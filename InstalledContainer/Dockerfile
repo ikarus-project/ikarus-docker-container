@@ -1,6 +1,6 @@
-ARG compiler "gcc"
+ARG COMPILER="gcc"
 
-FROM ikarusproject/ikarus-dev-${compiler}:latest
+FROM ikarusproject/ikarus-dev-${COMPILER}:latest
 ARG branch "main"
 ENV BRANCH=${branch}
 USER root
@@ -28,7 +28,7 @@ RUN git clone https://github.com/ikarus-project/Ikarus.git && \
     git checkout ${BRANCH} && \
     mkdir build && \
     cd build && \
-    cmake .. -DCMAKE_BUILD_TYPE="$DUNE_MODULE_CMAKE_FLAGS" && \
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${C_COMPILER} -DCMAKE_CXX_COMPILER=${CPP_COMPILER} -DDUNE_PYTHON_ALLOW_GET_PIP=1 -DDUNE_PYTHON_VIRTUALENV_SETUP=TRUE -DDUNE_ENABLE_PYTHONBINDINGS=TRUE -DBUILD_SHARED_LIBS=TRUE && \
     cmake --build . --target ikarus && \
     cmake --install . 
 
