@@ -28,7 +28,7 @@ RUN git clone https://github.com/ikarus-project/Ikarus.git && \
     git checkout ${BRANCH} && \
     mkdir build && \
     cd build && \
-    cmake .. -DCMAKE_BUILD_TYPE="$DUNE_MODULE_CMAKE_FLAGS" && \
+    cmake .. $DUNE_MODULE_CMAKE_FLAGS && \
     cmake --build . --target ikarus && \
     cmake --install . 
 
