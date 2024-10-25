@@ -72,7 +72,8 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   twine \
   matplotlib \
   clang-format==18.1.8 \
-  black==24.4.2
+  black==24.4.2 \
+  spdlog
   
   RUN apt-get -y --no-install-recommends install \
   gnuplot-x11 \
