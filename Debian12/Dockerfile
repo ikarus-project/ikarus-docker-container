@@ -50,9 +50,9 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   gnuplot \
   libtbb-dev
 
-  RUN  update-alternatives --install /usr/bin/python python /usr/bin/python3.11 11
+RUN  update-alternatives --install /usr/bin/python python /usr/bin/python3.11 11
 
-  RUN  python -m pip install --upgrade pip --break-system-packages && \
+RUN  python -m pip install --upgrade pip --break-system-packages && \
   python -m pip install --no-cache-dir --break-system-packages \
   cmakelang==0.6.13 \
   pyyaml \
@@ -74,8 +74,8 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   clang-format==18.1.8 \
   black==24.4.2 \
   spdlog
-  
-  RUN apt-get -y --no-install-recommends install \
+
+RUN apt-get -y --no-install-recommends install \
   gnuplot-x11 \
   curl \
   cppcheck \
@@ -126,18 +126,18 @@ RUN apt-get install --reinstall python3-apt
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key| apt-key add -
 RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-16 main"
 RUN wget https://apt.llvm.org/llvm.sh && \
-     chmod +x llvm.sh && \
-     ./llvm.sh 16 all
+  chmod +x llvm.sh && \
+  ./llvm.sh 16 all
 
 RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-17 main"
 RUN wget https://apt.llvm.org/llvm.sh && \
-     chmod +x llvm.sh && \
-     ./llvm.sh 17 all
+  chmod +x llvm.sh && \
+  ./llvm.sh 17 all
 
 RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-18 main"
 RUN wget https://apt.llvm.org/llvm.sh && \
-     chmod +x llvm.sh && \
-     ./llvm.sh 18 all
+  chmod +x llvm.sh && \
+  ./llvm.sh 18 all
 
 RUN  update-alternatives --install /usr/bin/clang clang /usr/bin/clang-16 10
 RUN  update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 10
@@ -158,19 +158,19 @@ RUN mkdir -p iwyu && \
   rm -rf iwyu
 
 RUN git clone --branch v3.11.3 --depth 1 https://github.com/nlohmann/json.git && \
-    cd json && \
-    mkdir build && \
-    cd build && \
-    cmake .. -DJSON_BuildTests=0 &&  \
-    make &&  \
-    make install 
+  cd json && \
+  mkdir build && \
+  cd build && \
+  cmake .. -DJSON_BuildTests=0 &&  \
+  make &&  \
+  make install 
 
 RUN git clone --branch master --depth 1 https://github.com/mapbox/earcut.hpp.git  && \
-    cd earcut.hpp && \
-    mkdir build && \
-    cd build && \
-    cmake .. -DEARCUT_BUILD_TESTS=OFF -DEARCUT_BUILD_BENCH=OFF -DEARCUT_BUILD_VIZ=OFF -DBUILD_SHARED_LIBS=ON && \
-    cmake --build . --target install  
+  cd earcut.hpp && \
+  mkdir build && \
+  cd build && \
+  cmake .. -DEARCUT_BUILD_TESTS=OFF -DEARCUT_BUILD_BENCH=OFF -DEARCUT_BUILD_VIZ=OFF -DBUILD_SHARED_LIBS=ON && \
+  cmake --build . --target install  
 
 RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
   cd Clipper2/CPP && \
@@ -196,3 +196,10 @@ RUN  git clone https://github.com/autodiff/autodiff && \
   cmake .. -DAUTODIFF_BUILD_PYTHON=1 -DAUTODIFF_BUILD_EXAMPLES=0 -DAUTODIFF_BUILD_DOCS=0 -DAUTODIFF_BUILD_TESTS=0 -DCMAKE_CCACHE_IGNORE=1 && \
   cmake --build . --target install --parallel 2 
 
+RUN git clone https://bitbucket.org/ignromero/muesli.git
+COPY patches/CMakeLists.txt /muesli
+COPY patches/Config.cmake.in /muesli
+RUN cd muesli && \
+  mkdir build &&  cd build && \
+  cmake .. && \
+  cmake --build . --target install --parallel 2  
