@@ -75,6 +75,9 @@ write_basic_package_version_file(
   COMPATIBILITY AnyNewerVersion
 )
 
+# Use -fPIC to generate position-independent code required for linking into shared libraries.
+set_property(TARGET muesli PROPERTY POSITION_INDEPENDENT_CODE ON)
+
 # install the configuration file
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/MuesliConfig.cmake
