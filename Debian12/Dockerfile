@@ -196,7 +196,9 @@ RUN  git clone https://github.com/autodiff/autodiff && \
   cmake .. -DAUTODIFF_BUILD_PYTHON=1 -DAUTODIFF_BUILD_EXAMPLES=0 -DAUTODIFF_BUILD_DOCS=0 -DAUTODIFF_BUILD_TESTS=0 -DCMAKE_CCACHE_IGNORE=1 && \
   cmake --build . --target install --parallel 2 
 
-RUN git clone https://bitbucket.org/ignromero/muesli.git
+RUN git clone https://bitbucket.org/ignromero/muesli.git && \
+  cd muesli && \
+  git checkout 27e8204971602cb042d633b8b5f87761272b10df
 COPY patches/CMakeLists.txt /muesli
 COPY patches/Config.cmake.in /muesli
 RUN cd muesli && \

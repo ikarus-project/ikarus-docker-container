@@ -61,7 +61,7 @@ install(EXPORT muesli-targets
 include(CMakePackageConfigHelpers)
 
 # generate the config file that is includes the exports
-configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/MuesliConfig.cmake.in
   "${CMAKE_CURRENT_BINARY_DIR}/MuesliConfig.cmake"
   INSTALL_DESTINATION "lib/cmake/example"
   NO_SET_AND_CHECK_MACRO
