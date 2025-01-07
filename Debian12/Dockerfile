@@ -200,7 +200,7 @@ RUN git clone https://bitbucket.org/ignromero/muesli.git && \
   cd muesli && \
   git checkout 27e8204971602cb042d633b8b5f87761272b10df
 COPY patches/CMakeLists.txt /muesli
-COPY patches/Config.cmake.in /muesli
+COPY patches/MuesliConfig.cmake.in /muesli
 RUN cd muesli && \
   mkdir build &&  cd build && \
   cmake .. && \
