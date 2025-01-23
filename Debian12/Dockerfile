@@ -39,7 +39,6 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   libsecret-1-0 \
   xdg-utils \
   clang-tidy \
-  clang-format-18 \
   liblapack-dev \
   libopenblas-dev \
   libsuitesparse-dev \
