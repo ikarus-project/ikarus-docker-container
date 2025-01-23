@@ -1,4 +1,6 @@
-FROM debian:bookworm-slim
+ARG debianversion "bookworm"
+
+FROM debian:${debianversion}-slim
 #docker build --squash -t ikarusproject/debian12:latest . &> build.log
 LABEL maintainer=mueller@ibb.uni-stuttgart.de
 
