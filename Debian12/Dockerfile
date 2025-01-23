@@ -19,7 +19,6 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   git \
   wget \
   apt-utils \
-  software-properties-common \
   gfortran \
   gcc-12 \
   g++-12 \
