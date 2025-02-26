@@ -116,8 +116,8 @@ RUN apt-get -y --no-install-recommends install \
   rm -rf matplotplusplus
 
 RUN apt update && apt install -y lsb-release wget gnupg ca-certificates
-RUN apt install --reinstall python3-software-properties
-RUN apt-get install --reinstall python3-apt
+RUN apt install --reinstall python3-software-properties -y
+RUN apt-get install --reinstall python3-apt -y
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key| apt-key add -
 RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-16 main"
 RUN wget https://apt.llvm.org/llvm.sh && \
