@@ -50,8 +50,6 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   gnuplot \
   libtbb-dev
 
-RUN  update-alternatives --install /usr/bin/python python /usr/bin/python3.11 11
-
 RUN  python -m pip install --upgrade pip --break-system-packages && \
   python -m pip install --no-cache-dir --break-system-packages \
   cmakelang==0.6.13 \
@@ -182,8 +180,8 @@ RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
 
 RUN git clone https://github.com/dmillard/eigengdb && \
   cd eigengdb && \
-  python3.11 setup.py install && \
-  python3.11 bin/eigengdb_register_printers && \
+  python3 setup.py install && \
+  python3 bin/eigengdb_register_printers && \
   gdb -q -iex "add-auto-load-safe-path /tmp/Ikarus/.gdbinit"
 
 RUN  git clone https://github.com/autodiff/autodiff && \
