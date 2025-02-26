@@ -106,7 +106,7 @@ RUN apt-get -y --no-install-recommends install \
   rm -rf spectra && \
   git clone https://github.com/alandefreitas/matplotplusplus.git && \
   cd matplotplusplus && \
-  git checkout v1.1.0 && \
+  git checkout v1.2.2 && \
   mkdir -p build && \
   cd build && \
   cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_SHARED_LIBS=1 && \
