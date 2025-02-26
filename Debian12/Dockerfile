@@ -109,7 +109,7 @@ RUN apt-get -y --no-install-recommends install \
   git checkout v1.2.2 && \
   mkdir -p build && \
   cd build && \
-  cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_SHARED_LIBS=1 && \
+  cmake .. -DCMAKE_BUILD_TYPE=Release -DMATPLOTPP_BUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=1 && \
   cmake --build . --parallel 4 --config Release && \
   cmake --install . && \
   cd ~ && \
