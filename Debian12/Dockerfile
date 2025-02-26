@@ -115,7 +115,7 @@ RUN apt-get -y --no-install-recommends install \
   cd ~ && \
   rm -rf matplotplusplus
 
-RUN apt update && apt install -y lsb-release wget software-properties-common gnupg ca-certificates
+RUN apt update && apt install -y lsb-release wget gnupg ca-certificates
 RUN apt install --reinstall python3-software-properties
 RUN apt-get install --reinstall python3-apt
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key| apt-key add -
