@@ -50,8 +50,7 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   gnuplot \
   libtbb-dev
 
-RUN  python3 -m pip install --upgrade pip --break-system-packages && \
-  python3 -m pip install --no-cache-dir --break-system-packages \
+RUN  python3 -m pip install --no-cache-dir --break-system-packages \
   cmakelang==0.6.13 \
   pyyaml \
   mkdocs \
