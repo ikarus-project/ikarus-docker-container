@@ -91,8 +91,6 @@ RUN apt-get -y --no-install-recommends install \
   cd ~ && \
   rm -rf fmt && \
   cd ~ && \
-  cp /usr/bin/clang-format-13 /usr/bin/clang-format && \
-  cd ~ && \
   git clone https://gitlab.com/libeigen/eigen.git && \
   cd eigen && \
   git checkout d26e19714fca2faf544619c3604f88d980e5a207 && \
