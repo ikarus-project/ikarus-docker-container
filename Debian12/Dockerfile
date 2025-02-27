@@ -119,19 +119,11 @@ RUN apt update && apt install -y lsb-release wget gnupg ca-certificates
 RUN apt install --reinstall python3-software-properties -y
 RUN apt-get install --reinstall python3-apt -y
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key| apt-key add -
-RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-16 main"
+#RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-16 main"
 RUN wget https://apt.llvm.org/llvm.sh && \
   chmod +x llvm.sh && \
-  ./llvm.sh 16 all
-
-RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-17 main"
-RUN wget https://apt.llvm.org/llvm.sh && \
-  chmod +x llvm.sh && \
-  ./llvm.sh 17 all
-
-RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-18 main"
-RUN wget https://apt.llvm.org/llvm.sh && \
-  chmod +x llvm.sh && \
+  ./llvm.sh 16 all && \
+  ./llvm.sh 17 all && \
   ./llvm.sh 18 all
 
 RUN  update-alternatives --install /usr/bin/clang clang /usr/bin/clang-16 10
