@@ -120,7 +120,7 @@ RUN apt install --reinstall python3-software-properties -y
 RUN apt-get install --reinstall python3-apt -y
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key| apt-key add -
 #RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-16 main"
-RUN wget https://apt.llvm.org/llvm.sh && \
+RUN wget https://raw.githubusercontent.com/opencollab/llvm-jenkins.debian.net/refs/heads/master/llvm.sh && \
   chmod +x llvm.sh && \
   ./llvm.sh 16 all && \
   ./llvm.sh 17 all && \
