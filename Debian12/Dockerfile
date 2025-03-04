@@ -124,12 +124,14 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | gpg --dearmor | tee /
 #RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-16 main"
 RUN wget https://raw.githubusercontent.com/opencollab/llvm-jenkins.debian.net/refs/heads/master/llvm.sh && \
   chmod +x llvm.sh && \
-  ./llvm.sh 16 all && \
+  if [ "$DISTRO" != "trixie" ]; then \
+    ./llvm.sh 16 all ; \
+  fi  && \
   ./llvm.sh 17 all && \
   ./llvm.sh 18 all
 
-RUN  update-alternatives --install /usr/bin/clang clang /usr/bin/clang-16 10
-RUN  update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 10
+RUN  update-alternatives --install /usr/bin/clang clang /usr/bin/clang-17 10
+RUN  update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-17 10
 
 
 
