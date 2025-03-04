@@ -120,7 +120,7 @@ RUN  DISTRO=$(lsb_release -sc) && \
     if [ "$DISTRO" != "trixie" ]; then \
         apt-get install -y --no-install-recommends software-properties-common; fi
 RUN apt-get install --reinstall python3-apt -y
-RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key| apt-key add -
+RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | gpg --dearmor | tee /usr/share/keyrings/llvm-snaptshot.gpg
 #RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-16 main"
 RUN wget https://raw.githubusercontent.com/opencollab/llvm-jenkins.debian.net/refs/heads/master/llvm.sh && \
   chmod +x llvm.sh && \
