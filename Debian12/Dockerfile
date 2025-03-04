@@ -116,6 +116,9 @@ RUN apt-get -y --no-install-recommends install \
   rm -rf matplotplusplus
 
 RUN apt update && apt install -y lsb-release wget gnupg ca-certificates
+RUN  DISTRO=$(lsb_release -sc) && \
+    if [ "$DISTRO" != "trixie" ]; then \
+        apt-get install -y --no-install-recommends software-properties-common;
 RUN apt install --reinstall python3-software-properties -y
 RUN apt-get install --reinstall python3-apt -y
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key| apt-key add -
