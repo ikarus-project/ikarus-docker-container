@@ -124,8 +124,9 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | gpg --dearmor | tee /
 #RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-16 main"
 RUN wget https://raw.githubusercontent.com/opencollab/llvm-jenkins.debian.net/refs/heads/master/llvm.sh && \
   chmod +x llvm.sh && \
+  DISTRO=$(lsb_release -sc) && \
   if [ "$DISTRO" != "trixie" ]; then \
-    ./llvm.sh 16 all ; \
+   ./llvm.sh 16 all ; \
   fi  && \
   ./llvm.sh 17 all && \
   ./llvm.sh 18 all
