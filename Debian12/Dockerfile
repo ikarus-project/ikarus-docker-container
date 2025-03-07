@@ -48,7 +48,8 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   doxygen \
   graphviz \ 
   gnuplot \
-  libtbb-dev
+  libtbb-dev \
+  python-is-python3
 
 RUN python3 -m pip install setuptools --no-cache-dir --break-system-packages && python3 -m pip install --no-cache-dir --break-system-packages \
   cmakelang==0.6.13 \
