@@ -22,6 +22,7 @@ EXPOSE 8000
 # USER docker
 # WORKDIR /home/docker
 
+RUN source $VIRTUAL_ENV/bin/activate
 
 RUN git clone https://github.com/ikarus-project/Ikarus.git && \
     cd Ikarus && \
