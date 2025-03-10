@@ -3,7 +3,7 @@ ARG compiler "gcc"
 FROM ikarusproject/ikarus-dev-${compiler}:latest
 ARG branch "main"
 ENV BRANCH=${branch}
-USER root
+USER 1001
 ARG ccompiler "gcc-12"
 ENV C_COMPILER=${ccompiler}
 
@@ -22,7 +22,7 @@ EXPOSE 8000
 # USER docker
 # WORKDIR /home/docker
 
-RUN source $VIRTUAL_ENV/bin/activate
+RUN cd ~ && git clone https://github.com/ikarus-project/Ikarus.git && \
 
 RUN git clone https://github.com/ikarus-project/Ikarus.git && \
     cd Ikarus && \
@@ -31,7 +31,7 @@ RUN git clone https://github.com/ikarus-project/Ikarus.git && \
     cd build && \
     cmake .. $DUNE_MODULE_CMAKE_FLAGS && \
     cmake --build . --target ikarus && \
-    cmake --install . 
+    sudo cmake --install .
 
 
 
