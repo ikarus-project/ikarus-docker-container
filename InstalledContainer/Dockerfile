@@ -21,18 +21,28 @@ EXPOSE 8000
 # RUN useradd --create-home --no-log-init --shell /bin/bash docker
 # USER docker
 # WORKDIR /home/docker
-
-RUN cd ~ && git clone https://github.com/ikarus-project/Ikarus.git && \
-
-RUN git clone https://github.com/ikarus-project/Ikarus.git && \
+RUN ls -l /usr/local/lib
+#USER 1001
+USER root
+RUN chmod +x $VIRTUAL_ENV/bin/activate
+RUN $VIRTUAL_ENV/bin/activate
+RUN apt-get update && apt-get install sudo -y
+RUN usermod -aG sudo user
+USER 1001
+RUN chmod +x $VIRTUAL_ENV/bin/activate
+RUN $VIRTUAL_ENV/bin/activate
+RUN which python
+RUN cd /dune && git  clone https://github.com/ikarus-project/Ikarus.git && \
     cd Ikarus && \
     git checkout ${BRANCH} && \
     mkdir build && \
-    cd build && \
-    cmake .. $DUNE_MODULE_CMAKE_FLAGS && \
-    cmake --build . --target ikarus && \
-    sudo cmake --install .
+    cd build
 
+#RUN cd /dune/Ikarus/build &&  sudo $VIRTUAL_ENV/bin/activate && cmake --debug-output --trace-source=/dune/dune-common/cmake/modules/DunePythonInstallPackage.cmake --trace-expand .. $DUNE_MODULE_CMAKE_FLAGS && \
+ #   cmake --build . --target ikarus
+RUN cd /dune &&  /dune/dune-common/bin/dunecontrol --only=ikarus --cmake-opts="$DUNE_MODULE_CMAKE_FLAGS" cmake -DDUNE_PYTHON_ADDITIONAL_PIP_PARAMS="--break-system-packages" &&\
+   sudo /dune/dune-common/bin/dunecontrol --only=ikarus --cmake-opts="$DUNE_MODULE_CMAKE_FLAGS" make install
+#USER 1001
 
 
 CMD [ "/bin/sh" ]
