@@ -10,10 +10,11 @@
 
      steps:
         - uses: actions/checkout@v4
-        # - name: Build the debian12 Docker image
-        #   working-directory: ./Debian12
-        #   run: |
-        #     docker build . --file Dockerfile --tag ikarusproject/debian12:latest
+        - name: Build the debian12 Docker image
+          working-directory: ./Debian12
+          run: |
+           docker build . --file Dockerfile --tag ikarusproject/debian12:latest --build-arg debianversion="bookworm"
+           docker build . --file Dockerfile --tag ikarusproject/debian13:latest --build-arg debianversion="trixie"
   
         - name: Build the dunebase Docker image
           working-directory: ./DuneBase

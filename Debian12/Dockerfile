@@ -19,7 +19,6 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   git \
   wget \
   apt-utils \
-  software-properties-common \
   gfortran \
   gcc-12 \
   g++-12 \
@@ -40,7 +39,6 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   libsecret-1-0 \
   xdg-utils \
   clang-tidy \
-  clang-format-13 \
   liblapack-dev \
   libopenblas-dev \
   libsuitesparse-dev \
@@ -50,12 +48,10 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   doxygen \
   graphviz \ 
   gnuplot \
-  libtbb-dev
+  libtbb-dev \
+  python-is-python3
 
-RUN  update-alternatives --install /usr/bin/python python /usr/bin/python3.11 11
-
-RUN  python -m pip install --upgrade pip --break-system-packages && \
-  python -m pip install --no-cache-dir --break-system-packages \
+RUN python3 -m pip install setuptools --no-cache-dir --break-system-packages && python3 -m pip install --no-cache-dir --break-system-packages \
   cmakelang==0.6.13 \
   pyyaml \
   mkdocs \
@@ -93,8 +89,6 @@ RUN apt-get -y --no-install-recommends install \
   cd ~ && \
   rm -rf fmt && \
   cd ~ && \
-  cp /usr/bin/clang-format-13 /usr/bin/clang-format && \
-  cd ~ && \
   git clone https://gitlab.com/libeigen/eigen.git && \
   cd eigen && \
   git checkout d26e19714fca2faf544619c3604f88d980e5a207 && \
@@ -113,36 +107,33 @@ RUN apt-get -y --no-install-recommends install \
   rm -rf spectra && \
   git clone https://github.com/alandefreitas/matplotplusplus.git && \
   cd matplotplusplus && \
-  git checkout v1.1.0 && \
+  git checkout v1.2.2 && \
   mkdir -p build && \
   cd build && \
-  cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_SHARED_LIBS=1 && \
+  cmake .. -DCMAKE_BUILD_TYPE=Release -DMATPLOTPP_BUILD_EXAMPLES=OFF -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=1 && \
   cmake --build . --parallel 4 --config Release && \
   cmake --install . && \
   cd ~ && \
   rm -rf matplotplusplus
 
-RUN apt update && apt install -y lsb-release wget software-properties-common gnupg ca-certificates
-RUN apt install --reinstall python3-software-properties
-RUN apt-get install --reinstall python3-apt
-RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key| apt-key add -
-RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-16 main"
-RUN wget https://apt.llvm.org/llvm.sh && \
+RUN apt update && apt install -y lsb-release wget gnupg ca-certificates
+RUN  DISTRO=$(lsb_release -sc) && \
+    if [ "$DISTRO" != "trixie" ]; then \
+        apt-get install -y --no-install-recommends software-properties-common; fi
+RUN apt-get install --reinstall python3-apt -y
+RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | gpg --dearmor | tee /usr/share/keyrings/llvm-snaptshot.gpg
+#RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-16 main"
+RUN wget https://raw.githubusercontent.com/opencollab/llvm-jenkins.debian.net/refs/heads/master/llvm.sh && \
   chmod +x llvm.sh && \
-  ./llvm.sh 16 all
-
-RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-17 main"
-RUN wget https://apt.llvm.org/llvm.sh && \
-  chmod +x llvm.sh && \
-  ./llvm.sh 17 all
-
-RUN apt-add-repository "deb http://apt.llvm.org/bookworm/ llvm-toolchain-bookworm-18 main"
-RUN wget https://apt.llvm.org/llvm.sh && \
-  chmod +x llvm.sh && \
+  DISTRO=$(lsb_release -sc) && \
+  if [ "$DISTRO" != "trixie" ]; then \
+   ./llvm.sh 16 all ; \
+  fi  && \
+  ./llvm.sh 17 all && \
   ./llvm.sh 18 all
 
-RUN  update-alternatives --install /usr/bin/clang clang /usr/bin/clang-16 10
-RUN  update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 10
+RUN  update-alternatives --install /usr/bin/clang clang /usr/bin/clang-17 10
+RUN  update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-17 10
 
 
 
@@ -150,10 +141,10 @@ RUN mkdir -p iwyu && \
   cd iwyu && \
   git clone https://github.com/include-what-you-use/include-what-you-use.git && \
   cd include-what-you-use && \
-  git checkout clang_16 && \
+  git checkout clang_17 && \
   cd .. && \
   mkdir -p build && cd build && \
-  cmake -G "Unix Makefiles" -DLLVM_DIR="$(llvm-config --cmakedir)" -DIWYU_LLVM_ROOT_PATH=/usr/lib/llvm-16 -DCMAKE_C_COMPILER=/usr/lib/llvm-16/bin/clang -DCMAKE_CXX_COMPILER=/usr/lib/llvm-16/bin/clang++ -DCMAKE_PREFIX_PATH=/usr/lib/llvm-16 ../include-what-you-use && \
+  cmake -G "Unix Makefiles" -DLLVM_DIR="$(llvm-config --cmakedir)" -DIWYU_LLVM_ROOT_PATH=/usr/lib/llvm-17 -DCMAKE_C_COMPILER=/usr/lib/llvm-17/bin/clang -DCMAKE_CXX_COMPILER=/usr/lib/llvm-17/bin/clang++ -DCMAKE_PREFIX_PATH=/usr/lib/llvm-17 ../include-what-you-use && \
   make && \
   make install && \
   cd ~ && \
@@ -186,8 +177,8 @@ RUN git clone https://github.com/AngusJohnson/Clipper2.git && \
 
 RUN git clone https://github.com/dmillard/eigengdb && \
   cd eigengdb && \
-  python3.11 setup.py install && \
-  python3.11 bin/eigengdb_register_printers && \
+  python3 setup.py install && \
+  python3 bin/eigengdb_register_printers && \
   gdb -q -iex "add-auto-load-safe-path /tmp/Ikarus/.gdbinit"
 
 RUN  git clone https://github.com/autodiff/autodiff && \

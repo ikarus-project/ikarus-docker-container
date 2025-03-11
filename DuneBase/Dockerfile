@@ -58,14 +58,16 @@ RUN groupadd -r --gid $GID user \
   && echo "user ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/user \
   && chmod 0440 /etc/sudoers.d/user
 
-RUN chown  -R $UID:$GID /dune 
+RUN chown  -R $UID:$GID /dune
+ENV VIRTUAL_ENV=/dune/dune-common/build-cmake/dune-env
+RUN chmod +x $VIRTUAL_ENV/bin/activate
 
 RUN cd autodiff && \
   cd .build/  && \
   cd python/package && \
   /dune/dune-common/build-cmake/run-in-dune-env python -m pip install . --no-deps --force-reinstall --no-compile && \
   cd / && \
-  rm -rf autodiff 
+  rm -rf autodiff
 
 RUN apt-get auto-remove -y && \
   apt-get clean && \
@@ -76,7 +78,7 @@ RUN apt-get auto-remove -y && \
 
 # use python venv on start up
 
-ENV VIRTUAL_ENV=/dune/dune-common/build-cmake/dune-env/
+
 
 #RUN python3 -m venv  $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
