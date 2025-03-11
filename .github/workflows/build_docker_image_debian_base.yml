@@ -34,9 +34,12 @@
        - name: Build the dunebase Docker image
          working-directory: ./DuneBase
          run: |
-           docker build . --file Dockerfile --tag ikarusproject/dunebase-gcc:latest --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
-           docker build . --file Dockerfile --tag ikarusproject/dunebase-clang:latest --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
-
+           docker build . --file Dockerfile --tag ikarusproject/dunebase-gcc-debian12:latest --build-arg debianversion="12" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
+           docker build . --file Dockerfile --tag ikarusproject/dunebase-clang-debian12:latest --build-arg debianversion="12" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
+           docker build . --file Dockerfile --tag ikarusproject/dunebase-gcc-debian13:latest --build-arg debianversion="13" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
+           docker build . --file Dockerfile --tag ikarusproject/dunebase-clang-debian13:latest --build-arg debianversion="13" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
+           docker tag ikarusproject/dunebase-gcc:latest ikarusproject/dunebase-gcc-debian12:latest
+           docker tag ikarusproject/dunebase-clang:latest ikarusproject/dunebase-clang-debian12:latest
        - name: Docker Login
          uses: azure/docker-login@v1
          with:
@@ -48,4 +51,8 @@
            docker push ikarusproject/debian13:latest  
            docker push ikarusproject/dunebase-gcc:latest 
            docker push ikarusproject/dunebase-clang:latest  
+           docker push ikarusproject/dunebase-gcc-debian12:latest 
+           docker push ikarusproject/dunebase-clang-debian12:latest   
+           docker push ikarusproject/dunebase-gcc-debian13:latest 
+           docker push ikarusproject/dunebase-clang-debian13:latest   
              
