@@ -1,8 +1,10 @@
-FROM ikarusproject/debian12:latest
+ARG debianversion "12"
+
+FROM ikarusproject/debian${debianversion}:latest
 
 LABEL maintainer=mueller@ibb.uni-stuttgart.de
-#docker build --squash -t ikarusproject/dunebase-gcc:latest --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"  . &> build.log
-#docker build --squash -t ikarusproject/dunebase-clang:latest --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"  . &> build.log
+#docker build --squash -t ikarusproject/dunebase-gcc:latest --build-arg debianversion="12" --build-arg ccompiler="gcc-12"  --build-arg cppcompiler="g++-12"  . &> build.log
+#docker build --squash -t ikarusproject/dunebase-clang:latest --build-arg debianversion="12" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"  . &> build.log
 ARG DEBIAN_FRONTEND=noninteractive
 ENV CI true
 EXPOSE 8000
