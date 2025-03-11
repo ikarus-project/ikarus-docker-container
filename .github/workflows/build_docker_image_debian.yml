@@ -17,9 +17,11 @@
        - name: Build the Development Docker image
          working-directory: ./DevelopContainer
          run: |
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev-gcc:latest --build-arg compiler="gcc" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev-clang:latest --build-arg compiler="clang" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
-           docker tag ikarusproject/ikarus-dev-gcc:latest ikarusproject/ikarus-dev:latest # set the latest tag to the gcc image
+           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev-gcc-debian12:latest --build-arg compiler="gcc-debian12" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
+           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev-clang-debian12:latest --build-arg compiler="clang-debian12" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
+           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev-gcc-debian13:latest --build-arg compiler="gcc-debian13" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
+           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev-clang-debian13:latest --build-arg compiler="clang-debian13" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
+           docker tag ikarusproject/ikarus-dev-gcc-debian12:latest ikarusproject/ikarus-dev:latest # set the latest tag to the gcc image
        - name: Docker Login
          uses: azure/docker-login@v1
          with:
@@ -34,9 +36,11 @@
        - name: Build the Installed Docker image
          working-directory: ./InstalledContainer
          run: |
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-gcc:latest --build-arg compiler="gcc" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-clang:latest --build-arg compiler="clang" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
-           docker tag ikarusproject/ikarus-gcc:latest ikarusproject/ikarus:latest # set the latest tag to the gcc image
+           docker build . --file Dockerfile --tag ikarusproject/ikarus-gcc-debian12:latest --build-arg compiler="gcc-debian12" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
+           docker build . --file Dockerfile --tag ikarusproject/ikarus-clang-debian12:latest --build-arg compiler="clang-debian12" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
+           docker build . --file Dockerfile --tag ikarusproject/ikarus-gcc-debian13:latest --build-arg compiler="gcc-debian13" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
+           docker build . --file Dockerfile --tag ikarusproject/ikarus-clang-debian13:latest --build-arg compiler="clang-debian13" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
+           docker tag ikarusproject/ikarus-gcc-debian12:latest ikarusproject/ikarus:latest # set the latest tag to the gcc image
        - name: Docker Login
          uses: azure/docker-login@v1
          with:
@@ -46,6 +50,10 @@
          run: |
            docker push ikarusproject/ikarus-gcc:latest     
            docker push ikarusproject/ikarus-clang:latest         
+           docker push ikarusproject/ikarus-gcc-debian12:latest     
+           docker push ikarusproject/ikarus-clang-debian12:latest    
+           docker push ikarusproject/ikarus-gcc-debian13:latest     
+           docker push ikarusproject/ikarus-clang-debian13:latest    
            docker push ikarusproject/ikarus:latest        
 
     #    - name: Build the GrassHopperServer images
