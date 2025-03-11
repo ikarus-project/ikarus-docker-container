@@ -27,7 +27,9 @@
            username: ${{ secrets.DOCKER_USERNAME }}
            password: ${{ secrets.DOCKER_PASSWORD }}
        - name: Publish the Docker image
-         run: docker push ikarusproject/debian12:latest
+         run: |
+           docker push ikarusproject/debian12:latest
+           docker push ikarusproject/debian13:latest
 
        - name: Build the dunebase Docker image
          working-directory: ./DuneBase
