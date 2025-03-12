@@ -22,6 +22,8 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   gfortran \
   gcc-12 \
   g++-12 \
+  gcc-14 \
+  g++-14 \
   cmake \
   gdb  \
   ccache \
