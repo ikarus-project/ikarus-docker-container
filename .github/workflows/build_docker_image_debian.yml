@@ -32,6 +32,10 @@
            docker push ikarusproject/ikarus-dev-gcc:latest
            docker push ikarusproject/ikarus-dev-clang:latest
            docker push ikarusproject/ikarus-dev:latest
+           docker push ikarusproject/ikarus-dev-gcc-debian13:latest
+           docker push ikarusproject/ikarus-dev-clang-debian13:latest
+           docker push ikarusproject/ikarus-dev-gcc-debian12:latest
+           docker push ikarusproject/ikarus-dev-clang-debian12:latest
          
        - name: Build the Installed Docker image
          working-directory: ./InstalledContainer
