@@ -55,7 +55,7 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
 
 RUN DISTRO=$(lsb_release -sc) && \
   if [ "$DISTRO" == "trixie" ]; then \
-    apt-get update -q -y && apt-get -y --no-install-recommends install   gcc-14   g++-14 
+    apt-get update -q -y && apt-get -y --no-install-recommends install   gcc-14   g++-14 \
   fi
 
 RUN python3 -m pip install setuptools --no-cache-dir --break-system-packages && python3 -m pip install --no-cache-dir --break-system-packages \
