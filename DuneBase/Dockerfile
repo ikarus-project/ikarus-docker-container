@@ -75,7 +75,7 @@ RUN apt-get auto-remove -y && \
   apt-get clean && \
   rm -rvf /var/lib/apt/lists/* && \
   rm -rvf /var/cache/apt/archives/* && \
-  dpkg -l | grep -qw software-properties-common && apt-get -y remove software-properties-common
+  dpkg -l | grep -qw software-properties-common && apt-get -y remove software-properties-common || true
 
 
 # use python venv on start up
