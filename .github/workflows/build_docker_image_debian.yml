@@ -47,6 +47,8 @@
            docker build . --file Dockerfile --tag ikarusproject/ikarus-gcc-debian13:latest --build-arg compiler="gcc-debian13" --build-arg ccompiler="gcc-14" --build-arg cppcompiler="g++-14"
            docker build . --file Dockerfile --tag ikarusproject/ikarus-clang-debian13:latest --build-arg compiler="clang-debian13" --build-arg ccompiler="clang-17" --build-arg cppcompiler="clang++-17"
            docker tag ikarusproject/ikarus-gcc-debian12:latest ikarusproject/ikarus:latest # set the latest tag to the gcc image
+           docker tag ikarusproject/ikarus-gcc-debian12:latest ikarusproject/ikarus-gcc:latest 
+           docker tag ikarusproject/ikarus-clang-debian12:latest ikarusproject/ikarus-clang:latest 
        - name: Docker Login
          uses: azure/docker-login@v1
          with:
