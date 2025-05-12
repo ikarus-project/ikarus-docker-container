@@ -80,7 +80,7 @@ RUN python3 -m pip install setuptools --no-cache-dir --break-system-packages && 
   spdlog
   
 RUN DISTRO=$(lsb_release -sc) && \
-  if [ "$DISTRO" == "trixie" ]; then \
+  if [ "$DISTRO" = "trixie" ]; then \
     python3 -m pip install setuptools --no-cache-dir --break-system-packages && python3 -m pip install --no-cache-dir --break-system-packages "mpi4py>4"; \
   else \
     python3 -m pip install setuptools --no-cache-dir --break-system-packages && python3 -m pip install --no-cache-dir --break-system-packages mpi4py==3.1.6; \
