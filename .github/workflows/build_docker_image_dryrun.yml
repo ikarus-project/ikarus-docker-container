@@ -1,40 +1,76 @@
- name: Build All Docker container (dry run)
+name: Build All Docker Containers (dry run)
 
- on:
-    pull_request:
-    workflow_dispatch:
+on:
+  pull_request:
+  workflow_dispatch:
 
- jobs:
-   build-docker-debian:
-     runs-on: ubuntu-latest
+jobs:
+  build-docker-images:
+    runs-on: ubuntu-latest
 
-     steps:
-        - uses: actions/checkout@v4
-        - name: Build the debian12 Docker image
-          working-directory: ./Debian12
-          run: |
-           docker build . --file Dockerfile --tag ikarusproject/debian12:latest --build-arg debianversion="bookworm"
-           docker build . --file Dockerfile --tag ikarusproject/debian13:latest --build-arg debianversion="trixie"
-  
-        - name: Build the dunebase Docker image
-          working-directory: ./DuneBase
-          run: |
-           docker build . --file Dockerfile --tag ikarusproject/dunebase-gcc-debian12:latest --build-arg debianversion="12" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
-           docker build . --file Dockerfile --tag ikarusproject/dunebase-clang-debian12:latest --build-arg debianversion="12" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
-           docker build . --file Dockerfile --tag ikarusproject/dunebase-gcc-debian13:latest --build-arg debianversion="13" --build-arg ccompiler="gcc-14" --build-arg cppcompiler="g++-14"
-           docker build . --file Dockerfile --tag ikarusproject/dunebase-clang-debian13:latest --build-arg debianversion="13" --build-arg ccompiler="clang-17" --build-arg cppcompiler="clang++-17"
+    strategy:
+      matrix:
+        image_type: [debian, dunebase, develop, installed]
+        debian_version: [12, 13]
+        compiler:
+          - { name: gcc, c: gcc-12, cpp: g++-12 }
+          - { name: clang, c: clang-16, cpp: clang++-16 }
 
-        - name: Build the Development Docker image
-          working-directory: ./DevelopContainer
-          run: |
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev-gcc-debian12:latest --build-arg compiler="gcc-debian12" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev-clang-debian12:latest --build-arg compiler="clang-debian12" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev-gcc-debian13:latest --build-arg compiler="gcc-debian13" --build-arg ccompiler="gcc-14" --build-arg cppcompiler="g++-14"
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev-clang-debian13:latest --build-arg compiler="clang-debian13" --build-arg ccompiler="clang-17" --build-arg cppcompiler="clang++-17"
-        - name: Build the Installed Docker image
-          working-directory: ./InstalledContainer
-          run: |
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-gcc-debian12:latest --build-arg compiler="gcc-debian12" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-clang-debian12:latest --build-arg compiler="clang-debian12" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-gcc-debian13:latest --build-arg compiler="gcc-debian13" --build-arg ccompiler="gcc-14" --build-arg cppcompiler="g++-14"
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-clang-debian13:latest --build-arg compiler="clang-debian13" --build-arg ccompiler="clang-17" --build-arg cppcompiler="clang++-17"
+      # Exclude invalid combinations (e.g., gcc-12 on debian13 should be gcc-14)
+      exclude:
+        - debian_version: 13
+          compiler: { name: gcc, c: gcc-12, cpp: g++-12 }
+        - debian_version: 13
+          compiler: { name: clang, c: clang-16, cpp: clang++-16 }
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set adjusted compilers for Debian 13
+        id: set-compilers
+        run: |
+          if [ "${{ matrix.debian_version }}" = "13" ]; then
+            if [ "${{ matrix.compiler.name }}" = "gcc" ]; then
+              echo "ccompiler=gcc-14" >> $GITHUB_OUTPUT
+              echo "cppcompiler=g++-14" >> $GITHUB_OUTPUT
+            else
+              echo "ccompiler=clang-17" >> $GITHUB_OUTPUT
+              echo "cppcompiler=clang++-17" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "ccompiler=${{ matrix.compiler.c }}" >> $GITHUB_OUTPUT
+            echo "cppcompiler=${{ matrix.compiler.cpp }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build Docker image
+        run: |
+          case "${{ matrix.image_type }}" in
+            debian)
+              if [ "${{ matrix.debian_version }}" = "12" ]; then
+                docker build ./Debian12 --file Dockerfile --tag ikarusproject/debian12:latest --build-arg debianversion="bookworm"
+              else
+                docker build ./Debian12 --file Dockerfile --tag ikarusproject/debian13:latest --build-arg debianversion="trixie"
+              fi
+              ;;
+            dunebase)
+              docker build ./DuneBase --file Dockerfile \
+                --tag ikarusproject/dunebase-${{ matrix.compiler.name }}-debian${{ matrix.debian_version }}:latest \
+                --build-arg debianversion="${{ matrix.debian_version }}" \
+                --build-arg ccompiler="${{ steps.set-compilers.outputs.ccompiler }}" \
+                --build-arg cppcompiler="${{ steps.set-compilers.outputs.cppcompiler }}"
+              ;;
+            develop)
+              docker build ./DevelopContainer --file Dockerfile \
+                --tag ikarusproject/ikarus-dev-${{ matrix.compiler.name }}-debian${{ matrix.debian_version }}:latest \
+                --build-arg compiler="${{ matrix.compiler.name }}-debian${{ matrix.debian_version }}" \
+                --build-arg ccompiler="${{ steps.set-compilers.outputs.ccompiler }}" \
+                --build-arg cppcompiler="${{ steps.set-compilers.outputs.cppcompiler }}"
+              ;;
+            installed)
+              docker build ./InstalledContainer --file Dockerfile \
+                --tag ikarusproject/ikarus-${{ matrix.compiler.name }}-debian${{ matrix.debian_version }}:latest \
+                --build-arg compiler="${{ matrix.compiler.name }}-debian${{ matrix.debian_version }}" \
+                --build-arg ccompiler="${{ steps.set-compilers.outputs.ccompiler }}" \
+                --build-arg cppcompiler="${{ steps.set-compilers.outputs.cppcompiler }}"
+              ;;
+          esac
