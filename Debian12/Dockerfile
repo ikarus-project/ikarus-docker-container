@@ -73,7 +73,7 @@ RUN python3 -m pip install setuptools --no-cache-dir --break-system-packages && 
   scikit-build \
   numpy==1.26.4 \
   scipy \
-  mpi4py \
+  mpi4py==3.1.6 \
   twine \
   matplotlib \
   clang-format==18.1.8 \
