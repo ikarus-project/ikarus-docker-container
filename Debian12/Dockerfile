@@ -79,10 +79,11 @@ RUN python3 -m pip install setuptools --no-cache-dir --break-system-packages && 
   black==24.4.2 \
   spdlog
   
-RUN if [ "$debianversion" = "bookworm" ]; then \
-    python3 -m pip install setuptools --no-cache-dir --break-system-packages && python3 -m pip install --no-cache-dir --break-system-packages mpi4py==3.1.6; \
-  else \
+RUN DISTRO=$(lsb_release -sc) && \
+  if [ "$DISTRO" == "trixie" ]; then \
     python3 -m pip install setuptools --no-cache-dir --break-system-packages && python3 -m pip install --no-cache-dir --break-system-packages "mpi4py>4"; \
+  else \
+    python3 -m pip install setuptools --no-cache-dir --break-system-packages && python3 -m pip install --no-cache-dir --break-system-packages mpi4py==3.1.6; \
   fi
 
 RUN apt-get -y --no-install-recommends install \
