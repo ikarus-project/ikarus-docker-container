@@ -1,7 +1,7 @@
 name: Build All Docker Containers (dry run)
 
 on:
-  pull_request:
+  push:
   workflow_dispatch:
 
 jobs:
@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         debian_version: [12, 13]
         compiler: [gcc, clang]
@@ -34,32 +35,36 @@ jobs:
           fi
 
       - name: Build Debian base image
+        working-directory: ./Debian12
         run: |
           if [[ "${{ matrix.debian_version }}" == "12" ]]; then
-            docker build ./Debian12 --file Dockerfile --tag ikarusproject/debian12:latest --build-arg debianversion="bookworm"
+            docker build . --file Dockerfile --tag ikarusproject/debian12:latest --build-arg debianversion="bookworm"
           else
-            docker build ./Debian12 --file Dockerfile --tag ikarusproject/debian13:latest --build-arg debianversion="trixie"
+            docker build . --file Dockerfile --tag ikarusproject/debian13:latest --build-arg debianversion="trixie"
           fi
 
       - name: Build DuneBase image
+        working-directory: ./DuneBase
         run: |
-          docker build ./DuneBase --file Dockerfile \
+          docker build . --file Dockerfile \
             --tag ikarusproject/dunebase-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
             --build-arg debianversion="${{ matrix.debian_version }}" \
             --build-arg ccompiler="${{ env.C_COMPILER }}" \
             --build-arg cppcompiler="${{ env.CPP_COMPILER }}"
 
       - name: Build Develop image
+        working-directory: ./DevelopContainer
         run: |
-          docker build ./DevelopContainer --file Dockerfile \
+          docker build . --file Dockerfile \
             --tag ikarusproject/ikarus-dev-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
             --build-arg compiler="${{ matrix.compiler }}-debian${{ matrix.debian_version }}" \
             --build-arg ccompiler="${{ env.C_COMPILER }}" \
             --build-arg cppcompiler="${{ env.CPP_COMPILER }}"
 
       - name: Build Installed image
+        working-directory: ./DevelopContainer
         run: |
-          docker build ./InstalledContainer --file Dockerfile \
+          docker build . --file Dockerfile \
             --tag ikarusproject/ikarus-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
             --build-arg compiler="${{ matrix.compiler }}-debian${{ matrix.debian_version }}" \
             --build-arg ccompiler="${{ env.C_COMPILER }}" \
