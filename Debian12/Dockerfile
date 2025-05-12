@@ -59,7 +59,6 @@ RUN DISTRO=$(lsb_release -sc) && \
   fi
 
 RUN python3 -m pip install setuptools --no-cache-dir --break-system-packages && \
-  python3 -m pip install --no-cache-dir --break-system-packages \
   cmakelang==0.6.13 \
   pyyaml \
   mkdocs \
@@ -78,8 +77,9 @@ RUN python3 -m pip install setuptools --no-cache-dir --break-system-packages && 
   matplotlib \
   clang-format==18.1.8 \
   black==24.4.2 \
-  spdlog && \
-  if [ "$debianversion" = "bookworm" ]; then \
+  spdlog
+  
+RUN if [ "$debianversion" = "bookworm" ]; then \
     python3 -m pip install --no-cache-dir --break-system-packages mpi4py==3.1.6; \
   else \
     python3 -m pip install --no-cache-dir --break-system-packages "mpi4py>4"; \
