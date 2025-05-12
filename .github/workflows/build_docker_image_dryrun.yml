@@ -12,41 +12,40 @@ jobs:
       matrix:
         image_type: [debian, dunebase, develop, installed]
         debian_version: [12, 13]
-        compiler:
-          - { name: gcc, c: gcc-12, cpp: g++-12 }
-          - { name: clang, c: clang-16, cpp: clang++-16 }
+        compiler: [gcc, clang]
 
-      # Exclude invalid combinations (e.g., gcc-12 on debian13 should be gcc-14)
-      exclude:
-        - debian_version: 13
-          compiler: { name: gcc, c: gcc-12, cpp: g++-12 }
-        - debian_version: 13
-          compiler: { name: clang, c: clang-16, cpp: clang++-16 }
+        exclude:
+          # Exclude invalid compiler versions for debian13
+          - compiler: gcc
+            debian_version: 13
+          - compiler: clang
+            debian_version: 13
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set adjusted compilers for Debian 13
-        id: set-compilers
+      - name: Set compiler versions
+        id: vars
         run: |
-          if [ "${{ matrix.debian_version }}" = "13" ]; then
-            if [ "${{ matrix.compiler.name }}" = "gcc" ]; then
-              echo "ccompiler=gcc-14" >> $GITHUB_OUTPUT
-              echo "cppcompiler=g++-14" >> $GITHUB_OUTPUT
-            else
-              echo "ccompiler=clang-17" >> $GITHUB_OUTPUT
-              echo "cppcompiler=clang++-17" >> $GITHUB_OUTPUT
-            fi
-          else
-            echo "ccompiler=${{ matrix.compiler.c }}" >> $GITHUB_OUTPUT
-            echo "cppcompiler=${{ matrix.compiler.cpp }}" >> $GITHUB_OUTPUT
+          if [[ "${{ matrix.compiler }}" == "gcc" && "${{ matrix.debian_version }}" == "12" ]]; then
+            echo "C_COMPILER=gcc-12" >> $GITHUB_ENV
+            echo "CPP_COMPILER=g++-12" >> $GITHUB_ENV
+          elif [[ "${{ matrix.compiler }}" == "clang" && "${{ matrix.debian_version }}" == "12" ]]; then
+            echo "C_COMPILER=clang-16" >> $GITHUB_ENV
+            echo "CPP_COMPILER=clang++-16" >> $GITHUB_ENV
+          elif [[ "${{ matrix.compiler }}" == "gcc" && "${{ matrix.debian_version }}" == "13" ]]; then
+            echo "C_COMPILER=gcc-14" >> $GITHUB_ENV
+            echo "CPP_COMPILER=g++-14" >> $GITHUB_ENV
+          elif [[ "${{ matrix.compiler }}" == "clang" && "${{ matrix.debian_version }}" == "13" ]]; then
+            echo "C_COMPILER=clang-17" >> $GITHUB_ENV
+            echo "CPP_COMPILER=clang++-17" >> $GITHUB_ENV
           fi
 
       - name: Build Docker image
         run: |
           case "${{ matrix.image_type }}" in
             debian)
-              if [ "${{ matrix.debian_version }}" = "12" ]; then
+              if [[ "${{ matrix.debian_version }}" == "12" ]]; then
                 docker build ./Debian12 --file Dockerfile --tag ikarusproject/debian12:latest --build-arg debianversion="bookworm"
               else
                 docker build ./Debian12 --file Dockerfile --tag ikarusproject/debian13:latest --build-arg debianversion="trixie"
@@ -54,23 +53,23 @@ jobs:
               ;;
             dunebase)
               docker build ./DuneBase --file Dockerfile \
-                --tag ikarusproject/dunebase-${{ matrix.compiler.name }}-debian${{ matrix.debian_version }}:latest \
+                --tag ikarusproject/dunebase-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
                 --build-arg debianversion="${{ matrix.debian_version }}" \
-                --build-arg ccompiler="${{ steps.set-compilers.outputs.ccompiler }}" \
-                --build-arg cppcompiler="${{ steps.set-compilers.outputs.cppcompiler }}"
+                --build-arg ccompiler="${{ env.C_COMPILER }}" \
+                --build-arg cppcompiler="${{ env.CPP_COMPILER }}"
               ;;
             develop)
               docker build ./DevelopContainer --file Dockerfile \
-                --tag ikarusproject/ikarus-dev-${{ matrix.compiler.name }}-debian${{ matrix.debian_version }}:latest \
-                --build-arg compiler="${{ matrix.compiler.name }}-debian${{ matrix.debian_version }}" \
-                --build-arg ccompiler="${{ steps.set-compilers.outputs.ccompiler }}" \
-                --build-arg cppcompiler="${{ steps.set-compilers.outputs.cppcompiler }}"
+                --tag ikarusproject/ikarus-dev-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
+                --build-arg compiler="${{ matrix.compiler }}-debian${{ matrix.debian_version }}" \
+                --build-arg ccompiler="${{ env.C_COMPILER }}" \
+                --build-arg cppcompiler="${{ env.CPP_COMPILER }}"
               ;;
             installed)
               docker build ./InstalledContainer --file Dockerfile \
-                --tag ikarusproject/ikarus-${{ matrix.compiler.name }}-debian${{ matrix.debian_version }}:latest \
-                --build-arg compiler="${{ matrix.compiler.name }}-debian${{ matrix.debian_version }}" \
-                --build-arg ccompiler="${{ steps.set-compilers.outputs.ccompiler }}" \
-                --build-arg cppcompiler="${{ steps.set-compilers.outputs.cppcompiler }}"
+                --tag ikarusproject/ikarus-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
+                --build-arg compiler="${{ matrix.compiler }}-debian${{ matrix.debian_version }}" \
+                --build-arg ccompiler="${{ env.C_COMPILER }}" \
+                --build-arg cppcompiler="${{ env.CPP_COMPILER }}"
               ;;
           esac
