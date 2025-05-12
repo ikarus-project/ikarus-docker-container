@@ -58,7 +58,8 @@ RUN DISTRO=$(lsb_release -sc) && \
     apt-get update -q -y && apt-get -y --no-install-recommends install gcc-14 g++-14 gcc-13 g++-13; \
   fi
 
-RUN python3 -m pip install setuptools --no-cache-dir --break-system-packages && python3 -m pip install --no-cache-dir --break-system-packages \
+RUN python3 -m pip install setuptools --no-cache-dir --break-system-packages && \
+  python3 -m pip install --no-cache-dir --break-system-packages \
   cmakelang==0.6.13 \
   pyyaml \
   mkdocs \
@@ -73,12 +74,16 @@ RUN python3 -m pip install setuptools --no-cache-dir --break-system-packages && 
   scikit-build \
   numpy==1.26.4 \
   scipy \
-  mpi4py==3.1.6 \
   twine \
   matplotlib \
   clang-format==18.1.8 \
   black==24.4.2 \
-  spdlog
+  spdlog && \
+  if [ "$debianversion" = "bookworm" ]; then \
+    python3 -m pip install --no-cache-dir --break-system-packages mpi4py==3.1.6; \
+  else \
+    python3 -m pip install --no-cache-dir --break-system-packages "mpi4py>4"; \
+  fi
 
 RUN apt-get -y --no-install-recommends install \
   gnuplot-x11 \
