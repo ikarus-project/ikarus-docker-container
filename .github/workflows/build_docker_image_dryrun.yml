@@ -13,12 +13,6 @@ jobs:
         debian_version: [12, 13]
         compiler: [gcc, clang]
 
-        exclude:
-          - compiler: gcc
-            debian_version: 13
-          - compiler: clang
-            debian_version: 13
-
     steps:
       - uses: actions/checkout@v4
 
