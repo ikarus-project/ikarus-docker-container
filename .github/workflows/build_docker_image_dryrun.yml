@@ -5,17 +5,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-docker-images:
+  build-docker:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        image_type: [debian, dunebase, develop, installed]
         debian_version: [12, 13]
         compiler: [gcc, clang]
 
         exclude:
-          # Exclude invalid compiler versions for debian13
           - compiler: gcc
             debian_version: 13
           - compiler: clang
@@ -41,35 +39,34 @@ jobs:
             echo "CPP_COMPILER=clang++-17" >> $GITHUB_ENV
           fi
 
-      - name: Build Docker image
+      - name: Build Debian base image
         run: |
-          case "${{ matrix.image_type }}" in
-            debian)
-              if [[ "${{ matrix.debian_version }}" == "12" ]]; then
-                docker build ./Debian12 --file Dockerfile --tag ikarusproject/debian12:latest --build-arg debianversion="bookworm"
-              else
-                docker build ./Debian12 --file Dockerfile --tag ikarusproject/debian13:latest --build-arg debianversion="trixie"
-              fi
-              ;;
-            dunebase)
-              docker build ./DuneBase --file Dockerfile \
-                --tag ikarusproject/dunebase-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
-                --build-arg debianversion="${{ matrix.debian_version }}" \
-                --build-arg ccompiler="${{ env.C_COMPILER }}" \
-                --build-arg cppcompiler="${{ env.CPP_COMPILER }}"
-              ;;
-            develop)
-              docker build ./DevelopContainer --file Dockerfile \
-                --tag ikarusproject/ikarus-dev-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
-                --build-arg compiler="${{ matrix.compiler }}-debian${{ matrix.debian_version }}" \
-                --build-arg ccompiler="${{ env.C_COMPILER }}" \
-                --build-arg cppcompiler="${{ env.CPP_COMPILER }}"
-              ;;
-            installed)
-              docker build ./InstalledContainer --file Dockerfile \
-                --tag ikarusproject/ikarus-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
-                --build-arg compiler="${{ matrix.compiler }}-debian${{ matrix.debian_version }}" \
-                --build-arg ccompiler="${{ env.C_COMPILER }}" \
-                --build-arg cppcompiler="${{ env.CPP_COMPILER }}"
-              ;;
-          esac
+          if [[ "${{ matrix.debian_version }}" == "12" ]]; then
+            docker build ./Debian12 --file Dockerfile --tag ikarusproject/debian12:latest --build-arg debianversion="bookworm"
+          else
+            docker build ./Debian12 --file Dockerfile --tag ikarusproject/debian13:latest --build-arg debianversion="trixie"
+          fi
+
+      - name: Build DuneBase image
+        run: |
+          docker build ./DuneBase --file Dockerfile \
+            --tag ikarusproject/dunebase-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
+            --build-arg debianversion="${{ matrix.debian_version }}" \
+            --build-arg ccompiler="${{ env.C_COMPILER }}" \
+            --build-arg cppcompiler="${{ env.CPP_COMPILER }}"
+
+      - name: Build Develop image
+        run: |
+          docker build ./DevelopContainer --file Dockerfile \
+            --tag ikarusproject/ikarus-dev-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
+            --build-arg compiler="${{ matrix.compiler }}-debian${{ matrix.debian_version }}" \
+            --build-arg ccompiler="${{ env.C_COMPILER }}" \
+            --build-arg cppcompiler="${{ env.CPP_COMPILER }}"
+
+      - name: Build Installed image
+        run: |
+          docker build ./InstalledContainer --file Dockerfile \
+            --tag ikarusproject/ikarus-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
+            --build-arg compiler="${{ matrix.compiler }}-debian${{ matrix.debian_version }}" \
+            --build-arg ccompiler="${{ env.C_COMPILER }}" \
+            --build-arg cppcompiler="${{ env.CPP_COMPILER }}"
