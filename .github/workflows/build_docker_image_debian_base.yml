@@ -1,58 +1,198 @@
- name: Build Development Debian and DUNE base Images
+name: Build Development Debian and DUNE base Images
 
- on:
-   push:
-     branches:
-       - 'main'
-     paths:
-      - Debian12/**  
-      - DuneBase/**  
+on:
+  push:
+    branches:
+    - 'main'
+    paths:
+    - Debian12/**
+    - DuneBase/**
 
-   workflow_dispatch:
+  workflow_dispatch:
 
- jobs:
-   build-docker-debian:
-     runs-on: ubuntu-latest
 
-     steps:
-       - uses: actions/checkout@v2
-       - name: Build the debian12 Docker image
-         working-directory: ./Debian12
-         run: |
-           docker build . --file Dockerfile --tag ikarusproject/debian12:latest --build-arg debianversion="bookworm"
-           docker build . --file Dockerfile --tag ikarusproject/debian13:latest --build-arg debianversion="trixie"
-       - name: Docker Login
-         uses: azure/docker-login@v1
-         with:
-           username: ${{ secrets.DOCKER_USERNAME }}
-           password: ${{ secrets.DOCKER_PASSWORD }}
-       - name: Publish the Docker image
-         run: |
-           docker push ikarusproject/debian12:latest
-           docker push ikarusproject/debian13:latest
+jobs:
+  build-docker-debian:
+    name: "Build Debian Base Image"
+    runs-on: ubuntu-latest
 
-       - name: Build the dunebase Docker image
-         working-directory: ./DuneBase
-         run: |
-           docker build . --file Dockerfile --tag ikarusproject/dunebase-gcc-debian12:latest --build-arg debianversion="12" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
-           docker build . --file Dockerfile --tag ikarusproject/dunebase-clang-debian12:latest --build-arg debianversion="12" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
-           docker build . --file Dockerfile --tag ikarusproject/dunebase-gcc-debian13:latest --build-arg debianversion="13" --build-arg ccompiler="gcc-14" --build-arg cppcompiler="g++-14"
-           docker build . --file Dockerfile --tag ikarusproject/dunebase-clang-debian13:latest --build-arg debianversion="13" --build-arg ccompiler="clang-17" --build-arg cppcompiler="clang++-17"
-           docker tag ikarusproject/dunebase-gcc-debian12:latest ikarusproject/dunebase-gcc:latest 
-           docker tag ikarusproject/dunebase-clang-debian12:latest ikarusproject/dunebase-clang:latest 
-       - name: Docker Login
-         uses: azure/docker-login@v1
-         with:
-           username: ${{ secrets.DOCKER_USERNAME }}
-           password: ${{ secrets.DOCKER_PASSWORD }}
-       - name: Publish the Docker image
-         run: |
-           docker push ikarusproject/debian12:latest   
-           docker push ikarusproject/debian13:latest  
-           docker push ikarusproject/dunebase-gcc:latest 
-           docker push ikarusproject/dunebase-clang:latest  
-           docker push ikarusproject/dunebase-gcc-debian12:latest 
-           docker push ikarusproject/dunebase-clang-debian12:latest   
-           docker push ikarusproject/dunebase-gcc-debian13:latest 
-           docker push ikarusproject/dunebase-clang-debian13:latest   
-             
+    strategy:
+      fail-fast: false
+      matrix:
+        debian_version: [ 12, 13 ]
+        compiler: [ gcc, clang ]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set compiler versions
+      id: vars
+      run: |
+        if [[ "${{ matrix.compiler }}" == "gcc" && "${{ matrix.debian_version }}" == "12" ]]; then
+          echo "C_COMPILER=gcc-12" >> $GITHUB_ENV
+          echo "CPP_COMPILER=g++-12" >> $GITHUB_ENV
+        elif [[ "${{ matrix.compiler }}" == "clang" && "${{ matrix.debian_version }}" == "12" ]]; then
+          echo "C_COMPILER=clang-16" >> $GITHUB_ENV
+          echo "CPP_COMPILER=clang++-16" >> $GITHUB_ENV
+        elif [[ "${{ matrix.compiler }}" == "gcc" && "${{ matrix.debian_version }}" == "13" ]]; then
+          echo "C_COMPILER=gcc-14" >> $GITHUB_ENV
+          echo "CPP_COMPILER=g++-14" >> $GITHUB_ENV
+        elif [[ "${{ matrix.compiler }}" == "clang" && "${{ matrix.debian_version }}" == "13" ]]; then
+          echo "C_COMPILER=clang-17" >> $GITHUB_ENV
+          echo "CPP_COMPILER=clang++-17" >> $GITHUB_ENV
+        fi
+
+    - name: Build Debian base image
+      working-directory: ./Debian12
+      run: |
+        if [[ "${{ matrix.debian_version }}" == "12" ]]; then
+          docker build . --file Dockerfile --tag ikarusproject/debian12:latest --build-arg debianversion="bookworm"
+        else
+          docker build . --file Dockerfile --tag ikarusproject/debian13:latest --build-arg debianversion="trixie"
+        fi
+
+    - name: Docker Login
+      uses: azure/docker-login@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Publish the Docker image
+      run: |
+        if [[ "${{ matrix.debian_version }}" == "12" ]]; then
+          docker push ikarusproject/debian12:latest
+        else
+          docker push ikarusproject/debian13:latest
+        fi
+
+  build-docker-dune:
+    name: "Build Dune Base Image"
+    runs-on: ubuntu-latest
+    needs: build-docker-debian
+
+    strategy:
+      fail-fast: false
+      matrix:
+        debian_version: [ 12, 13 ]
+        compiler: [ gcc, clang ]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set compiler versions
+      id: vars
+      run: |
+        if [[ "${{ matrix.compiler }}" == "gcc" && "${{ matrix.debian_version }}" == "12" ]]; then
+          echo "C_COMPILER=gcc-12" >> $GITHUB_ENV
+          echo "CPP_COMPILER=g++-12" >> $GITHUB_ENV
+        elif [[ "${{ matrix.compiler }}" == "clang" && "${{ matrix.debian_version }}" == "12" ]]; then
+          echo "C_COMPILER=clang-16" >> $GITHUB_ENV
+          echo "CPP_COMPILER=clang++-16" >> $GITHUB_ENV
+        elif [[ "${{ matrix.compiler }}" == "gcc" && "${{ matrix.debian_version }}" == "13" ]]; then
+          echo "C_COMPILER=gcc-14" >> $GITHUB_ENV
+          echo "CPP_COMPILER=g++-14" >> $GITHUB_ENV
+        elif [[ "${{ matrix.compiler }}" == "clang" && "${{ matrix.debian_version }}" == "13" ]]; then
+          echo "C_COMPILER=clang-17" >> $GITHUB_ENV
+          echo "CPP_COMPILER=clang++-17" >> $GITHUB_ENV
+        fi
+
+    - name: Build DuneBase image
+      working-directory: ./DuneBase
+      run: |
+        docker build . --file Dockerfile \
+          --tag ikarusproject/dunebase-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
+          --build-arg debianversion="${{ matrix.debian_version }}" \
+          --build-arg ccompiler="${{ env.C_COMPILER }}" \
+          --build-arg cppcompiler="${{ env.CPP_COMPILER }}"
+      
+    - name: Docker Login
+      uses: azure/docker-login@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Publish the Docker image
+      run: |
+        if [[ "${{ matrix.debian_version }}" == "12" ]]; then
+          if [[ "${{ matrix.compiler }}" == "gcc" ]]; then
+            docker tag ikarusproject/dunebase-gcc-debian12:latest ikarusproject/dunebase-gcc:latest 
+            docker push ikarusproject/dunebase-gcc:latest 
+            docker push ikarusproject/dunebase-gcc-debian12:latest 
+          else
+            docker tag ikarusproject/dunebase-clang-debian12:latest ikarusproject/dunebase-clang:latest   
+            docker push ikarusproject/dunebase-clang:latest  
+            docker push ikarusproject/dunebase-clang-debian12:latest    
+          fi      
+        else
+          if [[ "${{ matrix.compiler }}" == "gcc" ]]; then
+            docker push ikarusproject/dunebase-gcc-debian13:latest 
+          else
+           docker push ikarusproject/dunebase-clang-debian13:latest  
+          fi 
+        fi       
+                 
+  build-docker-dev:
+    name: "Build Dev Image"
+    runs-on: ubuntu-latest
+    needs: build-docker-dune
+
+    strategy:
+      fail-fast: false
+      matrix:
+        debian_version: [ 12, 13 ]
+        compiler: [ gcc, clang ]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set compiler versions
+      id: vars
+      run: |
+        if [[ "${{ matrix.compiler }}" == "gcc" && "${{ matrix.debian_version }}" == "12" ]]; then
+          echo "C_COMPILER=gcc-12" >> $GITHUB_ENV
+          echo "CPP_COMPILER=g++-12" >> $GITHUB_ENV
+        elif [[ "${{ matrix.compiler }}" == "clang" && "${{ matrix.debian_version }}" == "12" ]]; then
+          echo "C_COMPILER=clang-16" >> $GITHUB_ENV
+          echo "CPP_COMPILER=clang++-16" >> $GITHUB_ENV
+        elif [[ "${{ matrix.compiler }}" == "gcc" && "${{ matrix.debian_version }}" == "13" ]]; then
+          echo "C_COMPILER=gcc-14" >> $GITHUB_ENV
+          echo "CPP_COMPILER=g++-14" >> $GITHUB_ENV
+        elif [[ "${{ matrix.compiler }}" == "clang" && "${{ matrix.debian_version }}" == "13" ]]; then
+          echo "C_COMPILER=clang-17" >> $GITHUB_ENV
+          echo "CPP_COMPILER=clang++-17" >> $GITHUB_ENV
+        fi
+
+    - name: Build the Development Docker image
+      working-directory: ./DevelopContainer
+      run: |
+        docker build . --file Dockerfile \
+          --tag ikarusproject/ikarus-dev-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
+          --build-arg compiler="${{ matrix.compiler }}-debian${{ matrix.debian_version }}" \
+          --build-arg ccompiler="${{ env.C_COMPILER }}" \
+          --build-arg cppcompiler="${{ env.CPP_COMPILER }}"
+    
+    - name: Docker Login
+      uses: azure/docker-login@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Publish the Docker image
+      run: |
+        if [[ "${{ matrix.debian_version }}" == "12" ]]; then
+          if [[ "${{ matrix.compiler }}" == "gcc" ]]; then
+           docker tag ikarusproject/ikarus-dev-gcc-debian12:latest ikarusproject/ikarus-dev:latest # set the latest tag to the gcc image
+           docker tag ikarusproject/ikarus-dev-gcc-debian12:latest ikarusproject/ikarus-dev-gcc:latest 
+           docker push ikarusproject/ikarus-dev-gcc:latest
+           docker push ikarusproject/ikarus-dev:latest   
+           docker push ikarusproject/ikarus-dev-gcc-debian12:latest
+         else
+            docker tag ikarusproject/ikarus-dev-clang-debian12:latest ikarusproject/ikarus-dev-clang:latest 
+            docker push ikarusproject/ikarus-dev-clang:latest
+           docker push ikarusproject/ikarus-dev-clang-debian12:latest     
+          fi
+        else
+          if [[ "${{ matrix.compiler }}" == "gcc" ]]; then
+           docker push ikarusproject/ikarus-dev-gcc-debian13:latest
+          else 
+           docker push ikarusproject/ikarus-dev-clang-debian13:latest
+          fi
+        fi 
+          

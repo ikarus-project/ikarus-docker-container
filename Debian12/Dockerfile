@@ -52,11 +52,12 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   libtbb-dev \
   python-is-python3
 
-
 RUN DISTRO=$(lsb_release -sc) && \
   if [ "$DISTRO" == "trixie" ]; then \
     apt-get update -q -y && apt-get -y --no-install-recommends install gcc-14 g++-14 gcc-13 g++-13; \
   fi
+
+ENV MPI4PY_BUILD_BACKEND "scikit-build-core"
 
 RUN python3 -m pip install setuptools --no-cache-dir --break-system-packages && python3 -m pip install --no-cache-dir --break-system-packages \
   cmakelang==0.6.13 \
@@ -73,12 +74,13 @@ RUN python3 -m pip install setuptools --no-cache-dir --break-system-packages && 
   scikit-build \
   numpy==1.26.4 \
   scipy \
-  mpi4py \
   twine \
   matplotlib \
   clang-format==18.1.8 \
   black==24.4.2 \
-  spdlog
+  spdlog \
+  mpi4py
+
 
 RUN apt-get -y --no-install-recommends install \
   gnuplot-x11 \
@@ -141,8 +143,6 @@ RUN wget https://raw.githubusercontent.com/opencollab/llvm-jenkins.debian.net/re
 
 RUN  update-alternatives --install /usr/bin/clang clang /usr/bin/clang-17 10
 RUN  update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-17 10
-
-
 
 RUN mkdir -p iwyu && \
   cd iwyu && \

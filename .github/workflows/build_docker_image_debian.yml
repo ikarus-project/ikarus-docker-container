@@ -1,76 +1,43 @@
- name: Build Development Ikarus Docker Images
+name: Build Ikarus Docker Images
 
- on:
-   workflow_run:
-     workflows: ["Build Development Debian and DUNE base Images"]
-     branches: [main]
-     types:
-       - completed
-   workflow_dispatch:
+on:
+  workflow_run:
+    workflows: [ "Build Development Debian and DUNE base Images" ]
+    branches: [ main ]
+    types:
+    - completed
+  workflow_dispatch:
 
- jobs:
-   build-docker-debian:
-     runs-on: ubuntu-latest
 
-     steps:
-       - uses: actions/checkout@v2
-       - name: Build the Development Docker image
-         working-directory: ./DevelopContainer
-         run: |
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev-gcc-debian12:latest --build-arg compiler="gcc-debian12" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev-clang-debian12:latest --build-arg compiler="clang-debian12" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev-gcc-debian13:latest --build-arg compiler="gcc-debian13" --build-arg ccompiler="gcc-14" --build-arg cppcompiler="g++-14"
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-dev-clang-debian13:latest --build-arg compiler="clang-debian13" --build-arg ccompiler="clang-17" --build-arg cppcompiler="clang++-17"
-           docker tag ikarusproject/ikarus-dev-gcc-debian12:latest ikarusproject/ikarus-dev:latest # set the latest tag to the gcc image
-           docker tag ikarusproject/ikarus-dev-gcc-debian12:latest ikarusproject/ikarus-dev-gcc:latest 
-           docker tag ikarusproject/ikarus-dev-clang-debian12:latest ikarusproject/ikarus-dev-clang:latest 
-       - name: Docker Login
-         uses: azure/docker-login@v1
-         with:
-           username: ${{ secrets.DOCKER_USERNAME }}
-           password: ${{ secrets.DOCKER_PASSWORD }}
-       - name: Publish the Docker image
-         run: |
-           docker push ikarusproject/ikarus-dev-gcc:latest
-           docker push ikarusproject/ikarus-dev-clang:latest
-           docker push ikarusproject/ikarus-dev:latest
-           docker push ikarusproject/ikarus-dev-gcc-debian13:latest
-           docker push ikarusproject/ikarus-dev-clang-debian13:latest
-           docker push ikarusproject/ikarus-dev-gcc-debian12:latest
-           docker push ikarusproject/ikarus-dev-clang-debian12:latest
-         
-       - name: Build the Installed Docker image
-         working-directory: ./InstalledContainer
-         run: |
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-gcc-debian12:latest --build-arg compiler="gcc-debian12" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-clang-debian12:latest --build-arg compiler="clang-debian12" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-gcc-debian13:latest --build-arg compiler="gcc-debian13" --build-arg ccompiler="gcc-14" --build-arg cppcompiler="g++-14"
-           docker build . --file Dockerfile --tag ikarusproject/ikarus-clang-debian13:latest --build-arg compiler="clang-debian13" --build-arg ccompiler="clang-17" --build-arg cppcompiler="clang++-17"
-           docker tag ikarusproject/ikarus-gcc-debian12:latest ikarusproject/ikarus:latest # set the latest tag to the gcc image
-           docker tag ikarusproject/ikarus-gcc-debian12:latest ikarusproject/ikarus-gcc:latest 
-           docker tag ikarusproject/ikarus-clang-debian12:latest ikarusproject/ikarus-clang:latest 
-       - name: Docker Login
-         uses: azure/docker-login@v1
-         with:
-           username: ${{ secrets.DOCKER_USERNAME }}
-           password: ${{ secrets.DOCKER_PASSWORD }}
-       - name: Publish the Docker image
-         run: |
-           docker push ikarusproject/ikarus-gcc:latest     
-           docker push ikarusproject/ikarus-clang:latest         
-           docker push ikarusproject/ikarus-gcc-debian12:latest     
-           docker push ikarusproject/ikarus-clang-debian12:latest    
-           docker push ikarusproject/ikarus-gcc-debian13:latest     
-           docker push ikarusproject/ikarus-clang-debian13:latest    
-           docker push ikarusproject/ikarus:latest        
+jobs:
+  build-docker-ikarus:
+    name: "Build Ikarus Image"
+    runs-on: ubuntu-latest
 
-    #    - name: Build the GrassHopperServer images
-    #      working-directory: ./GrassHopperServer
-    #      run: docker build . --file Dockerfile --tag ikarusproject/ikarus-grasshopper:latest
-    #    - name: Docker Login
-    #      uses: azure/docker-login@v1
-    #      with:
-    #        username: ${{ secrets.DOCKER_USERNAME }}
-    #        password: ${{ secrets.DOCKER_PASSWORD }}
-    #    - name: Publish the Docker image
-    #      run: docker push ikarusproject/ikarus-grasshopper:latest               
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build the Installed Docker image
+      working-directory: ./InstalledContainer
+      run: |
+        docker build . --file Dockerfile --tag ikarusproject/ikarus-gcc-debian12:latest --build-arg compiler="gcc-debian12" --build-arg ccompiler="gcc-12" --build-arg cppcompiler="g++-12"
+        docker build . --file Dockerfile --tag ikarusproject/ikarus-clang-debian12:latest --build-arg compiler="clang-debian12" --build-arg ccompiler="clang-16" --build-arg cppcompiler="clang++-16"
+        docker build . --file Dockerfile --tag ikarusproject/ikarus-gcc-debian13:latest --build-arg compiler="gcc-debian13" --build-arg ccompiler="gcc-14" --build-arg cppcompiler="g++-14"
+        docker build . --file Dockerfile --tag ikarusproject/ikarus-clang-debian13:latest --build-arg compiler="clang-debian13" --build-arg ccompiler="clang-17" --build-arg cppcompiler="clang++-17"
+        docker tag ikarusproject/ikarus-gcc-debian12:latest ikarusproject/ikarus:latest # set the latest tag to the gcc image
+        docker tag ikarusproject/ikarus-gcc-debian12:latest ikarusproject/ikarus-gcc:latest 
+        docker tag ikarusproject/ikarus-clang-debian12:latest ikarusproject/ikarus-clang:latest 
+    - name: Docker Login
+      uses: azure/docker-login@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Publish the Docker image
+      run: |
+        docker push ikarusproject/ikarus-gcc:latest     
+        docker push ikarusproject/ikarus-clang:latest         
+        docker push ikarusproject/ikarus-gcc-debian12:latest     
+        docker push ikarusproject/ikarus-clang-debian12:latest    
+        docker push ikarusproject/ikarus-gcc-debian13:latest     
+        docker push ikarusproject/ikarus-clang-debian13:latest    
+        docker push ikarusproject/ikarus:latest        
