@@ -102,7 +102,7 @@ jobs:
           --tag ikarusproject/dunebase-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
           --build-arg debianversion="${{ matrix.debian_version }}" \
           --build-arg ccompiler="${{ env.C_COMPILER }}" \
-          --build-arg cppcompiler="${{ env.CPP_COMPILER }}" \
+          --build-arg cppcompiler="${{ env.CPP_COMPILER }}"
         if [[ "${{ matrix.debian_version }}" == "12" ]]; then
           docker tag ikarusproject/dunebase-gcc-debian12:latest ikarusproject/dunebase-gcc:latest 
           docker tag ikarusproject/dunebase-clang-debian12:latest ikarusproject/dunebase-clang:latest 
@@ -163,7 +163,7 @@ jobs:
           --tag ikarusproject/ikarus-dev-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
           --build-arg compiler="${{ matrix.compiler }}-debian${{ matrix.debian_version }}" \
           --build-arg ccompiler="${{ env.C_COMPILER }}" \
-          --build-arg cppcompiler="${{ env.CPP_COMPILER }}" \
+          --build-arg cppcompiler="${{ env.CPP_COMPILER }}"
         if [[ "${{ matrix.debian_version }}" == "12" ]]; then
           docker tag ikarusproject/ikarus-dev-gcc-debian12:latest ikarusproject/ikarus-dev:latest # set the latest tag to the gcc image
           docker tag ikarusproject/ikarus-dev-gcc-debian12:latest ikarusproject/ikarus-dev-gcc:latest 
