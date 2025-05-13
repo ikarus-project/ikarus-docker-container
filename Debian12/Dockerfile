@@ -51,7 +51,7 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   gnuplot \
   libtbb-dev \
   python-is-python3 \
-  mpi4py 
+  python3-mpi4py 
 
 
 RUN DISTRO=$(lsb_release -sc) && \
