@@ -50,7 +50,8 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   graphviz \ 
   gnuplot \
   libtbb-dev \
-  python-is-python3
+  python-is-python3 \
+  mpi4py 
 
 
 RUN DISTRO=$(lsb_release -sc) && \
@@ -79,12 +80,12 @@ RUN python3 -m pip install setuptools --no-cache-dir --break-system-packages && 
   black==24.4.2 \
   spdlog
   
-RUN DISTRO=$(lsb_release -sc) && \
-  if [ "$DISTRO" = "trixie" ]; then \
-    python3 -m pip install setuptools --no-cache-dir --break-system-packages && python3 -m pip install --no-cache-dir --break-system-packages "mpi4py>4"; \
-  else \
-    python3 -m pip install setuptools --no-cache-dir --break-system-packages && python3 -m pip install --no-cache-dir --break-system-packages mpi4py==3.1.6; \
-  fi
+# RUN DISTRO=$(lsb_release -sc) && \
+#   if [ "$DISTRO" = "trixie" ]; then \
+#     python3 -m pip install setuptools --no-cache-dir --break-system-packages && python3 -m pip install --no-cache-dir --break-system-packages "mpi4py>4"; \
+#   else \
+#     python3 -m pip install setuptools --no-cache-dir --break-system-packages && python3 -m pip install --no-cache-dir --break-system-packages mpi4py==3.1.4; \
+#   fi
 
 RUN apt-get -y --no-install-recommends install \
   gnuplot-x11 \
@@ -150,18 +151,18 @@ RUN  update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-17 
 
 
 
-RUN mkdir -p iwyu && \
-  cd iwyu && \
-  git clone https://github.com/include-what-you-use/include-what-you-use.git && \
-  cd include-what-you-use && \
-  git checkout clang_17 && \
-  cd .. && \
-  mkdir -p build && cd build && \
-  cmake -G "Unix Makefiles" -DLLVM_DIR="$(llvm-config --cmakedir)" -DIWYU_LLVM_ROOT_PATH=/usr/lib/llvm-17 -DCMAKE_C_COMPILER=/usr/lib/llvm-17/bin/clang -DCMAKE_CXX_COMPILER=/usr/lib/llvm-17/bin/clang++ -DCMAKE_PREFIX_PATH=/usr/lib/llvm-17 ../include-what-you-use && \
-  make && \
-  make install && \
-  cd ~ && \
-  rm -rf iwyu
+# RUN mkdir -p iwyu && \
+#   cd iwyu && \
+#   git clone https://github.com/include-what-you-use/include-what-you-use.git && \
+#   cd include-what-you-use && \
+#   git checkout clang_17 && \
+#   cd .. && \
+#   mkdir -p build && cd build && \
+#   cmake -G "Unix Makefiles" -DLLVM_DIR="$(llvm-config --cmakedir)" -DIWYU_LLVM_ROOT_PATH=/usr/lib/llvm-17 -DCMAKE_C_COMPILER=/usr/lib/llvm-17/bin/clang -DCMAKE_CXX_COMPILER=/usr/lib/llvm-17/bin/clang++ -DCMAKE_PREFIX_PATH=/usr/lib/llvm-17 ../include-what-you-use && \
+#   make && \
+#   make install && \
+#   cd ~ && \
+#   rm -rf iwyu
 
 RUN git clone --branch v3.11.3 --depth 1 https://github.com/nlohmann/json.git && \
   cd json && \
