@@ -50,14 +50,14 @@ RUN apt-get update -q -y && apt-get -y --no-install-recommends install build-ess
   graphviz \ 
   gnuplot \
   libtbb-dev \
-  python-is-python3 \
-  python3-mpi4py 
-
+  python-is-python3
 
 RUN DISTRO=$(lsb_release -sc) && \
   if [ "$DISTRO" == "trixie" ]; then \
     apt-get update -q -y && apt-get -y --no-install-recommends install gcc-14 g++-14 gcc-13 g++-13; \
   fi
+
+ENV MPI4PY_BUILD_BACKEND "scikit-build-core"
 
 RUN python3 -m pip install setuptools --no-cache-dir --break-system-packages && python3 -m pip install --no-cache-dir --break-system-packages \
   cmakelang==0.6.13 \
@@ -78,7 +78,8 @@ RUN python3 -m pip install setuptools --no-cache-dir --break-system-packages && 
   matplotlib \
   clang-format==18.1.8 \
   black==24.4.2 \
-  spdlog
+  spdlog \
+  mpi4py
   
 # RUN DISTRO=$(lsb_release -sc) && \
 #   if [ "$DISTRO" = "trixie" ]; then \
