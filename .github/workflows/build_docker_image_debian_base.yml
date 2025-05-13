@@ -65,7 +65,7 @@ jobs:
         fi
 
   build-docker-dune:
-    name: "Build Debian Base Image"
+    name: "Build Dune Base Image"
     runs-on: ubuntu-latest
     needs: build-docker-debian
 
