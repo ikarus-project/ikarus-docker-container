@@ -40,8 +40,8 @@ RUN mkdir -p dune && \
   git clone https://gitlab.dune-project.org/extensions/dune-grid-glue.git && \
   git clone https://gitlab.dune-project.org/fufem/dune-fufem.git  && \
   git clone https://gitlab.dune-project.org/extensions/dune-curvedgeometry.git && \
-    git clone https://gitlab.dune-project.org/extensions/dune-curvedgrid.git && \
-  git clone https://gitlab.mn.tu-dresden.de/iwr/dune-gmsh4.git && \
+  git clone https://gitlab.dune-project.org/extensions/dune-curvedgrid.git && \
+  git clone https://gitlab.dune-project.org/extensions/dune-gmsh4.git && \
   git clone https://gitlab.dune-project.org/extensions/dune-vtk.git && \
   dune-common/bin/dunecontrol git checkout releases/2.10 && \
   dune-common/bin/dunecontrol   --cmake-opts="$DUNE_MODULE_CMAKE_FLAGS" cmake && \
