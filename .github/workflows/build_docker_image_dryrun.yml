@@ -62,7 +62,7 @@ jobs:
             --build-arg cppcompiler="${{ env.CPP_COMPILER }}"
 
       - name: Build Installed image
-        working-directory: ./DevelopContainer
+        working-directory: ./InstalledContainer
         run: |
           docker build . --file Dockerfile \
             --tag ikarusproject/ikarus-${{ matrix.compiler }}-debian${{ matrix.debian_version }}:latest \
